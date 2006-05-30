@@ -1,1 +1,0 @@
-debug\framework.exe netmodel.xml
