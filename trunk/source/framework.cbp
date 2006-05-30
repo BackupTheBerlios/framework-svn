@@ -16,7 +16,7 @@
 				<Option deps_output=".deps"/>
 				<Option type="1"/>
 				<Option compiler="0"/>
-				<Option parameters="C:\netmodel\framework\netmodel.xml"/>
+				<Option parameters="..\netmodel.xml"/>
 				<Option projectResourceIncludeDirsRelation="1"/>
 				<Compiler>
 					<Add option="-O3"/>
@@ -35,7 +35,7 @@
 				<Option deps_output=".deps"/>
 				<Option type="1"/>
 				<Option compiler="0"/>
-				<Option parameters="C:\netmodel\framework\netmodel.xml"/>
+				<Option parameters="netmodel.xml"/>
 				<Option projectResourceIncludeDirsRelation="1"/>
 				<Compiler>
 					<Add option="-march=pentium4"/>
