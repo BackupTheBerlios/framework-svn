@@ -3,7 +3,7 @@
 
 void ColorAspect::Evolve()
 {
-
+  // this comment is new version
 }
 int ColorAspect::GetInfoSize()
 {
