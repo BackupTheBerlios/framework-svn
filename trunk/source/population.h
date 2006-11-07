@@ -16,6 +16,7 @@ class Population
 		Population(char *);
 		int GetSize();
 		~Population();
+		void Initiate();
 		void Iterate(int times);
 		void Iterate();
 		void Run();

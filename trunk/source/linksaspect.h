@@ -11,6 +11,7 @@ struct LinksInfo {
 	int				Predecesors_end;
 	// Results for the net evaluation
 	int				size_component;
+	int             num_component;
 	float			closeness;
 	float			betweenness;
 	float			mean_shortest;
@@ -37,6 +38,7 @@ private:
 	DistanceAspect			*_distanceAspect;
 	EducationLevelAspect	*_educationLevelAspect;
 	SocialCircleAspect		*_socialCircleAspect;
+	GeographyAspect	        *_geographyAspect;
 
 	void insert_biedge(int i, int j);
 	void insert_biedge(int i, int j, LinksInfo *iInfo,
@@ -48,7 +50,7 @@ private:
 
 	float Friend_Probability;
 	float Random_Probability;
-	float Alfa;
+	/*float Alfa;*/
 	float Homophilia;
 	float Heterophilia;
 	float Delete_Probability;

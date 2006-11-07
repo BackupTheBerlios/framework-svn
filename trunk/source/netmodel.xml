@@ -22,21 +22,20 @@
 	<Aspects>
 		<Links>
 			<Seed>25</Seed>
-			<Friend_Probability>0.8</Friend_Probability>
-			<Random_Probability>0.5</Random_Probability>
-			<Delete_Probability>0.03</Delete_Probability>
-			<Alfa>0.5</Alfa>
-			<Homophilia>0.8</Homophilia>
-			<Heterophilia>0.5</Heterophilia>
+			<Friend_Probability>1</Friend_Probability>
+			<Random_Probability>0.1</Random_Probability>
+			<Delete_Probability>0.1</Delete_Probability>
+			<Homophilia>1</Homophilia>
+			<Heterophilia>1</Heterophilia>
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
-			<Levels>3</Levels>
+			<Levels>1</Levels>
 			<ToleranceHomophilia>.5</ToleranceHomophilia>
 			<ToleranceHeterophilia>.5</ToleranceHeterophilia>
 			<Seed>25</Seed>
 		</EducationLevel>
 		<SocialCircle><!-- dim[circ]-->
-			<Circles>5</Circles>
+			<Circles>1</Circles>
 			<Seed>25</Seed>
 		</SocialCircle>
 		<Distance>
@@ -48,10 +47,11 @@
 			<Delta>1</Delta>
 		</Distance>
 		<Geography>
-			<Width>500</Width> <!-- dim[xc]-->
+			<Width>10</Width> <!-- dim[xc]-->
 			<FocusWidth>3</FocusWidth> <!-- Focus -->
-			<Height>500</Height> <!-- dim[yc]-->
+			<Height>10</Height> <!-- dim[yc]-->
 			<FocusHeight>3</FocusHeight> <!-- Focus -->
+			<Alfa>1.0</Alfa>
 			<Seed>25</Seed>
 		</Geography>
 	</Aspects>

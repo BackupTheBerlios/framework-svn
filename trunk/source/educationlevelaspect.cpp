@@ -33,18 +33,22 @@ float EducationLevelAspect::pdistrHomophilia(int gap)
 {
    float proba;
    /*For members of the same circle of interests*/
-   proba = exp(-gap*gap / (_toleranceHomophilia * _levels * _levels));	
+   if (_toleranceHomophilia > 0)
+        proba = exp(-gap*gap / (_toleranceHomophilia *(_levels-1)*(_levels-1)));
+   else
+	   proba = 0.0;
    return proba;
 }
 
+/*Simmeric distance*/
 float EducationLevelAspect::pdistrHeterophilia(int gap)
 {
    float proba;
    /*For members not in the same circle of interests*/
    if (_toleranceHeterophilia > 0)
-	   proba = (float) (0.5 * exp(-gap * gap / (_toleranceHeterophilia * _levels * _levels)));	
-   else 
-	   proba = 0.0;	
+	   proba = (float) (0.5 * exp(-gap * gap / (_toleranceHeterophilia * (_levels-1) * (_levels-1))));
+   else
+	   proba = 0.0;
    return proba;
 }
 

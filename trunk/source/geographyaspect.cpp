@@ -16,6 +16,7 @@ void GeographyAspect::InitializeAspect()
 	int yHeight = GetConfigInt("Height");
 	int xFocusWidth = GetConfigInt("FocusWidth");
 	int yFocusHeight = GetConfigInt("FocusHeight");
+	Alfa = GetConfigFloat("Alfa");
 
 	_seed = GetConfigLong("Seed"); Seed = &_seed;
 	// Set random socialcircles for everybody...
@@ -27,6 +28,13 @@ void GeographyAspect::InitializeAspect()
 		element->X = (int)floor(xWidth/2 * gasdev(Seed) / xFocusWidth);
 		element->Y = (int)floor(yHeight/2 * gasdev(Seed) / yFocusHeight);
 	}
+}
+
+float GeographyAspect::pdistrGeographic(float gdist)
+{
+    float proba;
+    proba = (float) exp(-Alfa * log(gdist + 1.0F));
+    return proba;
 }
 
 GeographyInfo * GeographyAspect::operator[](key agentId)

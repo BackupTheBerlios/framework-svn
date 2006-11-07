@@ -27,6 +27,7 @@ float gasdev(long *idum)
 }
 
 /*Random Number generator (c) Numerical Recipes*/
+/*TEST IF [0, 1) or (0, 1]*/
 #define IA 16807
 #define IM 2147483647
 #define AM (1.0/IM)
@@ -62,7 +63,7 @@ float ran1(long *idum)
 	j=iy/NDIV;
 	iy=iv[j];
 	iv[j] = *idum;
-	if ((temp=(float) AM*iy) > RNMX) 
+	if ((temp=(float) AM*iy) > RNMX)
 		return (float) RNMX;
 	else return temp;
 }

@@ -370,6 +370,7 @@ Population::~Population()
 		deletebasicxmlnode(_rootConfig);
 }
 
+
 void Population::Iterate(int times)
 {
 	_history = 0;
@@ -514,8 +515,8 @@ void Population::Run()
 	struct basicxmlnode *run = getchildxmlnode(_rootConfig, "Run");
 	int times = getchildxmlnodeintvalue(run, "Loops", 1);
 	std::cout << LINE;
-	std::cout << "Running 1 of " << times << " loops...\n";
-	Iterate(times);
+    std::cout << "Running from empty net... 1 of " << times << " loops...\n";
+    Iterate(times);
 	std::cout << LINE;
 	std::cout << "Finished.\n";
 

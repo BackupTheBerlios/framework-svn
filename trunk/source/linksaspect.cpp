@@ -18,7 +18,7 @@ void LinksAspect::InitializeAspect()
 	// Load parameters
 	_seed = GetConfigLong("Seed"); Seed = &_seed;
 	Friend_Probability = GetConfigFloat("Friend_Probability");
-	Alfa = GetConfigFloat("Alfa");
+	/*Alfa = GetConfigFloat("Alfa");*/
 	Homophilia = GetConfigFloat("Homophilia");
 	Heterophilia = GetConfigFloat("Heterophilia");
 	Random_Probability = GetConfigFloat("Random_Probability");
@@ -29,6 +29,7 @@ void LinksAspect::InitializeAspect()
 	// Optional...
 	_educationLevelAspect = (EducationLevelAspect *) this->TryGetAspect(typeid(EducationLevelAspect).name());
 	_socialCircleAspect = (SocialCircleAspect *) this->TryGetAspect(typeid(SocialCircleAspect).name());
+	_geographyAspect = (GeographyAspect *) this->TryGetAspect(typeid(GeographyAspect).name());
 
 	// Initialize the link elements...
 	Members = this->begin->GetSize();
@@ -68,6 +69,7 @@ void LinksAspect::Evolve()
   int friendOfFriendId;
   int deleteId;
   int agentId;
+
 
   int q = 0;
 
@@ -247,10 +249,14 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 			p1 = (float) Homophilia * _educationLevelAspect->pdistrHomophilia(educationDistance);
 		else
 			p1 = (float) Homophilia;
-		p2 = (float) exp(-Alfa * log(geographicDistance + 1.0F));
+		/*p2 = (float) exp(-Alfa * log(geographicDistance + 1.0F));*/
+		p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
+		/* Warning: we assume that total probability is the normalized sum of all probabilities,
+		but this can be modified as a generalized sum (e. g. Minkowsi metrics)*/
      	proba = (float) ((p1+p2) / (Homophilia + 1.0));
 		/*Second Normalization*/
 		if (_socialCircleAspect != NULL)
+		    /* VER LA JUSTIFICACION DE ESTO PARA CONVENCERME Y CONVENCER A PABLO!!!*/
 			proba /= _socialCircleAspect->CircleSizeOfAgent(agentId1); /* The population of that circle*/
 		if(ran1(Seed) < proba)
 			return true;
@@ -261,7 +267,7 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 			p1=(float)Heterophilia * _educationLevelAspect->pdistrHeterophilia(educationDistance);
 		else
 			p1=(float)Heterophilia;
-		p2=(float) exp(-Alfa * log(geographicDistance + 1.0));
+		p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
 		proba = (float) ((p1+p2) / (Heterophilia + 1.0));
 		/*Second Normalization*/
 		proba /= (float)Members;
