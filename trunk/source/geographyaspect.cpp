@@ -12,21 +12,21 @@ int GeographyAspect::GetInfoSize()
 }
 void GeographyAspect::InitializeAspect()
 {
-	int xWidth = GetConfigInt("Width");
-	int yHeight = GetConfigInt("Height");
-	int xFocusWidth = GetConfigInt("FocusWidth");
-	int yFocusHeight = GetConfigInt("FocusHeight");
+	float xWidth = GetConfigFloat("Width");
+	float yHeight = GetConfigFloat("Height");
+	/*int xFocusWidth = GetConfigInt("FocusWidth");*/
+	/*int yFocusHeight = GetConfigInt("FocusHeight");*/
 	Alfa = GetConfigFloat("Alfa");
 
 	_seed = GetConfigLong("Seed"); Seed = &_seed;
-	// Set random socialcircles for everybody...
+
 	GeographyInfo *element;
 	for (Population::Iterator agentId = this->begin;
 		agentId != this->end; ++agentId)
 	{
 		element = (*this)[*agentId];
-		element->X = (int)floor(xWidth/2 * gasdev(Seed) / xFocusWidth);
-		element->Y = (int)floor(yHeight/2 * gasdev(Seed) / yFocusHeight);
+		element->X = xWidth * gasdev(Seed);
+		element->Y = yHeight * gasdev(Seed);
 	}
 }
 

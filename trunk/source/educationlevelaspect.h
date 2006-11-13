@@ -15,15 +15,17 @@ public:
 	void virtual ShowValues(int agentId, std::vector <char *> &fields,
 								 varValue *values);
 	~EducationLevelAspect();
-	float pdistrHomophilia(int gap);
-	float pdistrHeterophilia(int gap);
+	float pdistrEducational(int gap);
+	/*float pdistrHomophilia(int gap);*/
+	/*float pdistrHeterophilia(int gap);*/
 
 private:
 	long *Seed;
 	long _seed;
 	int _levels;
-	float _toleranceHeterophilia;
-	float _toleranceHomophilia;
+	/*float _toleranceHeterophilia;*/
+	/*float _toleranceHomophilia;*/
+	float Beta;
 };
 
 #endif

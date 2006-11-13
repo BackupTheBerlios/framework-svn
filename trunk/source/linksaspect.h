@@ -51,8 +51,8 @@ private:
 	float Friend_Probability;
 	float Random_Probability;
 	/*float Alfa;*/
-	float Homophilia;
-	float Heterophilia;
+	/*float Homophilia;*/
+	/*float Heterophilia;*/
 	float Delete_Probability;
 
 	long *Seed;

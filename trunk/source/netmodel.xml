@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <ModelConfiguration>
 	<Run>
-		<Loops>400</Loops> <!-- default: 1-->
-		<StatusUpdateStep>1</StatusUpdateStep>
+		<Loops>100000</Loops> <!-- default: 1-->
+		<StatusUpdateStep>5</StatusUpdateStep>
 	</Run>
 	<Globals>
 		<DeltaT>1</DeltaT> <!-- default: 1-->
@@ -25,13 +25,10 @@
 			<Friend_Probability>1</Friend_Probability>
 			<Random_Probability>0.1</Random_Probability>
 			<Delete_Probability>0.1</Delete_Probability>
-			<Homophilia>1</Homophilia>
-			<Heterophilia>1</Heterophilia>
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
-			<Levels>1</Levels>
-			<ToleranceHomophilia>.5</ToleranceHomophilia>
-			<ToleranceHeterophilia>.5</ToleranceHeterophilia>
+			<Levels>10</Levels>
+			<Beta> 0.0 </Beta>
 			<Seed>25</Seed>
 		</EducationLevel>
 		<SocialCircle><!-- dim[circ]-->
@@ -48,10 +45,8 @@
 		</Distance>
 		<Geography>
 			<Width>10</Width> <!-- dim[xc]-->
-			<FocusWidth>3</FocusWidth> <!-- Focus -->
 			<Height>10</Height> <!-- dim[yc]-->
-			<FocusHeight>3</FocusHeight> <!-- Focus -->
-			<Alfa>1.0</Alfa>
+			<Alfa>0.0</Alfa>
 			<Seed>25</Seed>
 		</Geography>
 	</Aspects>
@@ -60,9 +55,9 @@
 			<Filename>nodos_all.txt</Filename>
 			<Headers>Yes</Headers> <!-- Values: yes (default) / no  -->
 			<Population>Personas</Population>
-			<RestartEveryCycle>Yes</RestartEveryCycle> <!-- Values: yes / no (default) -->
+            <RestartEveryCycle>No</RestartEveryCycle> <!-- Values: yes / no (default) -->
 			<Type>List</Type>
-			<Loops>100000</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
+			<Loops>10000</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
 			<Fields>
 				<Geography>
 					<Field>X</Field>
@@ -72,15 +67,15 @@
 					<Field>Circle</Field>
 				</SocialCircle>
 				<Links>
-					<Field>Degree</Field>
+					<!--<Field>Degree</Field>
 					<Field>Clustering</Field>
 					<Field>MeanShortest</Field>
 					<Field>Closeness</Field>
 					<Field>Betweenness</Field>
 					<Field>SizeComponent</Field>
-					<Field>MaxDiameter</Field>
-					<!--Field>Links</Field>
-					<Field>LinksUnique</Field-->
+					<Field>MaxDiameter</Field-->
+					<!--Field>Links</Field-->
+					<Field>LinksUnique</Field>
 				</Links>
 			</Fields>
 		</Output>
@@ -89,7 +84,7 @@
 			<Headers>Yes</Headers>
 			<Population>Personas</Population>
 			<Type>Aggregate</Type>
-			<Loops>100</Loops>
+			<Loops>1000000</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional
@@ -102,28 +97,6 @@
 					<Field Operation="Average">Clustering</Field>
 					<Field Operation="Max">MaxDiameter</Field>
 					<Field Operation="Average">Betweenness</Field>
-				</Links>
-			</Fields>
-		</Output>
-		<Output>
-			<Filename>snapshot.txt</Filename>
-			<Headers>Yes</Headers> <!-- Values: yes (default) / no  -->
-			<Population>Personas</Population>
-			<Type>List</Type>
-			<RestartEveryCycle>Yes</RestartEveryCycle> <!-- Values: yes / no (default) -->
-			<!--Loops>50</Loops-->		<!-- Max. # of loops in seconds (default infinite)-->
-			<Timespan>10000000</Timespan> <!-- Max. timespan in seconds (default infinite) -->
-			<Fields>
-				<Geography>
-					<Field>X</Field>
-					<Field>Y</Field>
-				</Geography>
-				<SocialCircle>
-					<Field>Circle</Field>
-				</SocialCircle>
-				<Links>
-					<Field>Degree</Field>
-					<Field>LinksUnique</Field>
 				</Links>
 			</Fields>
 		</Output>

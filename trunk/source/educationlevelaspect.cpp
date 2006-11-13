@@ -12,8 +12,9 @@ int EducationLevelAspect::GetInfoSize()
 }
 void EducationLevelAspect::InitializeAspect()
 {
-	_toleranceHomophilia = GetConfigFloat("ToleranceHomophilia");
-	_toleranceHeterophilia = GetConfigFloat("ToleranceHeterophilia");
+	/*_toleranceHomophilia = GetConfigFloat("ToleranceHomophilia");*/
+	/*_toleranceHeterophilia = GetConfigFloat("ToleranceHeterophilia");*/
+	Beta = GetConfigFloat("Beta");
 	_levels = GetConfigInt("Levels");
 	_seed	= GetConfigLong("Seed"); Seed = &_seed;
 	// Set random educationlevels for everybody...
@@ -29,28 +30,24 @@ EducationLevelAspect::~EducationLevelAspect()
 	;
 }
 
-float EducationLevelAspect::pdistrHomophilia(int gap)
+float EducationLevelAspect::pdistrEducational(int gap)
 {
-   float proba;
-   /*For members of the same circle of interests*/
-   if (_toleranceHomophilia > 0)
-        proba = exp(-gap*gap / (_toleranceHomophilia *(_levels-1)*(_levels-1)));
-   else
-	   proba = 0.0;
+   float proba = exp(-gap*gap*Beta / ((_levels)*(_levels)));
    return proba;
 }
 
-/*Simmeric distance*/
+/*Simmeric distance
 float EducationLevelAspect::pdistrHeterophilia(int gap)
 {
    float proba;
-   /*For members not in the same circle of interests*/
+
    if (_toleranceHeterophilia > 0)
 	   proba = (float) (0.5 * exp(-gap * gap / (_toleranceHeterophilia * (_levels-1) * (_levels-1))));
    else
 	   proba = 0.0;
    return proba;
 }
+*/
 
 EducationLevelInfo * EducationLevelAspect::operator[](key agentId)
 {

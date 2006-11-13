@@ -19,8 +19,8 @@ void LinksAspect::InitializeAspect()
 	_seed = GetConfigLong("Seed"); Seed = &_seed;
 	Friend_Probability = GetConfigFloat("Friend_Probability");
 	/*Alfa = GetConfigFloat("Alfa");*/
-	Homophilia = GetConfigFloat("Homophilia");
-	Heterophilia = GetConfigFloat("Heterophilia");
+	/*Homophilia = GetConfigFloat("Homophilia");*/
+	/*Heterophilia = GetConfigFloat("Heterophilia");*/
 	Random_Probability = GetConfigFloat("Random_Probability");
 	Delete_Probability = GetConfigFloat("Delete_Probability");
 
@@ -236,32 +236,31 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 {
 	float geographicDistance;
 	int educationDistance;
-	int circleDistance;
+	/*int circleDistance;*/
 	geographicDistance = _distanceAspect->GeographicDistance(agentId1, agentId2);
 	educationDistance = _distanceAspect->EducationDistance(agentId1, agentId2);
-	circleDistance = _distanceAspect->CircleDistance(agentId1, agentId2);
+	/*circleDistance = _distanceAspect->CircleDistance(agentId1, agentId2);*/
 
 	float p1,p2,proba;
     /*Same circle*/
-    if (circleDistance == 0)
-	{
-		if (_educationLevelAspect != NULL)
-			p1 = (float) Homophilia * _educationLevelAspect->pdistrHomophilia(educationDistance);
-		else
-			p1 = (float) Homophilia;
-		/*p2 = (float) exp(-Alfa * log(geographicDistance + 1.0F));*/
-		p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
-		/* Warning: we assume that total probability is the normalized sum of all probabilities,
-		but this can be modified as a generalized sum (e. g. Minkowsi metrics)*/
-     	proba = (float) ((p1+p2) / (Homophilia + 1.0));
-		/*Second Normalization*/
-		if (_socialCircleAspect != NULL)
-		    /* VER LA JUSTIFICACION DE ESTO PARA CONVENCERME Y CONVENCER A PABLO!!!*/
-			proba /= _socialCircleAspect->CircleSizeOfAgent(agentId1); /* The population of that circle*/
-		if(ran1(Seed) < proba)
-			return true;
-   }
-   /*Different circle == random*/
+    /*if (circleDistance == 0)
+	{*/
+	if (_educationLevelAspect != NULL)
+		p1 = (float) _educationLevelAspect->pdistrEducational(educationDistance);
+	else
+		p1 = 1.0;
+	p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
+	/* Warning: we assume that total probability is the normalized sum of all probabilities,
+	but this can be modified as a generalized sum (e. g. Minkowsi metrics)*/
+    proba = (float) ((p1+p2) / (2.0));
+	/*Second Normalization*/
+	if (_socialCircleAspect != NULL)
+	    /* VER LA JUSTIFICACION DE ESTO PARA CONVENCERME Y CONVENCER A PABLO!!!*/
+		proba /= _socialCircleAspect->CircleSizeOfAgent(agentId1); /* The population of that circle*/
+	if(ran1(Seed) < proba)
+		return true;
+   /*}
+   Different circle == random
    else {
 	    if (_educationLevelAspect != NULL)
 			p1=(float)Heterophilia * _educationLevelAspect->pdistrHeterophilia(educationDistance);
@@ -269,11 +268,12 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 			p1=(float)Heterophilia;
 		p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
 		proba = (float) ((p1+p2) / (Heterophilia + 1.0));
-		/*Second Normalization*/
+		Second Normalization
 		proba /= (float)Members;
 		if(ran1(Seed) < proba)
 			return true;
    }
+   */
    return false;
 }
 

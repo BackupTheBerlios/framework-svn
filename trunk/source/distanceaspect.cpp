@@ -24,6 +24,7 @@ float DistanceAspect::GeographicDistance(key agentId1, key agentId2)
    else
 		return 0.0;
 }
+/*symmetric distance*/
 int DistanceAspect::EducationDistance(key agentId1, key agentId2)
 {
    if (_educationLevelAspect == NULL) return 0;
