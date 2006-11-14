@@ -6,7 +6,8 @@
 		<Option title="framework"/>
 		<Option makefile="Makefile"/>
 		<Option makefile_is_custom="0"/>
-		<Option active_target="1"/>
+		<Option default_target="1"/>
+		<Option active_target="0"/>
 		<Option compiler="0"/>
 		<Build>
 			<Target title="Debug">
@@ -16,7 +17,7 @@
 				<Option deps_output=".deps"/>
 				<Option type="1"/>
 				<Option compiler="0"/>
-				<Option parameters="..\netmodel.xml"/>
+				<Option parameters="netmodel.xml"/>
 				<Option projectResourceIncludeDirsRelation="1"/>
 				<Compiler>
 					<Add option="-O3"/>
@@ -38,7 +39,6 @@
 				<Option parameters="netmodel.xml"/>
 				<Option projectResourceIncludeDirsRelation="1"/>
 				<Compiler>
-					<Add option="-march=pentium4"/>
 					<Add option="-O3"/>
 					<Add option="-W"/>
 					<Add option="-Wall"/>

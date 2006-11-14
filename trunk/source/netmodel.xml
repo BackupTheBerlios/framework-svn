@@ -9,7 +9,7 @@
 	</Globals>
 	<Populations>
   	<Personas>
-			<Size>10000</Size>
+			<Size>1000</Size>
 			<Aspects>
 				<EducationLevel/>
 				<Distance/>
@@ -25,10 +25,11 @@
 			<Friend_Probability>1</Friend_Probability>
 			<Random_Probability>0.1</Random_Probability>
 			<Delete_Probability>0.1</Delete_Probability>
+			<Startup_Links>1.0</Startup_Links>
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
 			<Levels>10</Levels>
-			<Beta> 0.0 </Beta>
+			<Beta> 1.0 </Beta>
 			<Seed>25</Seed>
 		</EducationLevel>
 		<SocialCircle><!-- dim[circ]-->
@@ -46,7 +47,7 @@
 		<Geography>
 			<Width>10</Width> <!-- dim[xc]-->
 			<Height>10</Height> <!-- dim[yc]-->
-			<Alfa>0.0</Alfa>
+			<Alfa>2.0</Alfa>
 			<Seed>25</Seed>
 		</Geography>
 	</Aspects>
@@ -56,8 +57,9 @@
 			<Headers>Yes</Headers> <!-- Values: yes (default) / no  -->
 			<Population>Personas</Population>
             <RestartEveryCycle>No</RestartEveryCycle> <!-- Values: yes / no (default) -->
+            <Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
 			<Type>List</Type>
-			<Loops>10000</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
+			<Loops>1000</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
 			<Fields>
 				<Geography>
 					<Field>X</Field>
@@ -84,7 +86,8 @@
 			<Headers>Yes</Headers>
 			<Population>Personas</Population>
 			<Type>Aggregate</Type>
-			<Loops>1000000</Loops>
+			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+			<Loops>1000</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional
@@ -96,7 +99,10 @@
 					<Field Operation="Sum">Degree</Field>
 					<Field Operation="Average">Clustering</Field>
 					<Field Operation="Max">MaxDiameter</Field>
-					<Field Operation="Average">Betweenness</Field>
+					<!--Field Operation="Average">Betweenness</Field-->
+					<!--Field Operation="Count" Value="0">Degree</Field>
+					<Field Operation="Count" Value="1">Degree</Field>
+					<Field Operation="Count" Value="2">Degree</Field-->
 				</Links>
 			</Fields>
 		</Output>

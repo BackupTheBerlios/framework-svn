@@ -70,6 +70,11 @@ void Population::Initialize()
 		_runAspects[a]->Initialize();
 		std::cout << "Aspect " << _runAspects[a]->Name << " initialized...\n";
 	}
+	for (vector<AspectBase *>::size_type a = 0; a < _runAspects.size(); a++)
+	{
+		_runAspects[a]->Start();
+		std::cout << "Aspect " << _runAspects[a]->Name << " started...\n";
+	}
 }
 int Population::GetSize()
 {
@@ -115,6 +120,7 @@ void Population::CreateOutputs()
 		int loops = getchildxmlnodeintvalue(outputinfo, "Loops", 0xFFFFFF);
 		int timespan = getchildxmlnodeintvalue(outputinfo, "Timespan", 0xFFFFFF);
 		bool restarteverycycle = getchildxmlnodeboolvalue(outputinfo, "RestartEveryCycle", false);
+		bool enabled = getchildxmlnodeboolvalue(outputinfo, "Enabled", true);
 		// Checks pointers and names
 		if (filename == NULL)
 			throw ("Output config error: filename for output block was not found.");
@@ -143,6 +149,7 @@ void Population::CreateOutputs()
 		output->Timespan= timespan;
 		output->lastTime = t; // initialize time
 		output->restarteverycycle = restarteverycycle;
+		output->enabled = enabled;
 
 		// Get fields for the output
 		struct basicxmlnode *fields;
@@ -188,7 +195,14 @@ void Population::CreateOutputs()
 						else if (strcmp(operationName, "Max")==0)
 							op = Max;
 						else if (strcmp(operationName, "Count")==0)
+						{
 							op = Count;
+							char *valueString = getchildxmlnodeattributestringvalue(fieldinfo, "Value");
+							if (valueString == 0)
+								value = "\0";
+                            else
+                                value = valueString;
+						}
 						else if (strcmp(operationName, "Median")==0)
 							op = Median;
 						else if (strcmp(operationName, "StdDev")==0)
@@ -438,12 +452,12 @@ void Population::Iterate()
 }
 void Population::_iterate()
 {
-	for (vector<AspectBase *>::size_type a = 0; a < _runAspects.size(); a++)
+    for (vector<AspectBase *>::size_type a = 0; a < _runAspects.size(); a++)
 	{
-		_history++;
 		_runAspects[a]->Evolve();
 		doOutput();
 	}
+	_history++;
 }
 void Population::doOutput()
 {
@@ -458,7 +472,7 @@ void Population::doOutput()
 		Output *out = _outputs[n];
 		//time_t t; time(&t);
 		double t = get_time();
-		if (_history % out->Loops == 0 ||  (t - out->lastTime) > out->Timespan)
+		if (out->enabled && (_history % out->Loops == 0 ||  (t - out->lastTime) > out->Timespan))
 		{
 			// Le toca...
 			out->lastTime = t;

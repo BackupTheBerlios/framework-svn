@@ -36,6 +36,7 @@ public:
 	double	Timespan;
 	double	lastTime;
 	bool	restarteverycycle;
+	bool	enabled;
 	std::vector <Output *> &outputs;
 	// Functions
     void	CheckFileOpen();

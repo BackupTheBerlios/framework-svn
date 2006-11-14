@@ -26,17 +26,18 @@ class AspectBase
 public:
 	AspectBase();
 	virtual			~AspectBase();
+	void virtual	Start(void) { ; };
 	void virtual	Evolve(void) = 0;
 	void virtual	InitializeAspect(void) = 0;
 	void virtual	ReleaseAspect(void) { ; };
-	
+
 	int virtual		GetInfoSize(void) = 0;
 	int				GetConfigInt(char *key);
 	std::string		GetConfigString(char *key);
 	double			GetConfigDouble(char *key);
 	float			GetConfigFloat(char *key);
 	long			GetConfigLong(char *key);
-	
+
 	void			Initialize();
 	int				ReferenceCount;
 	float			DT;

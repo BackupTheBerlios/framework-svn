@@ -21,6 +21,7 @@ void LinksAspect::InitializeAspect()
 	/*Alfa = GetConfigFloat("Alfa");*/
 	/*Homophilia = GetConfigFloat("Homophilia");*/
 	/*Heterophilia = GetConfigFloat("Heterophilia");*/
+    Startup_Links = GetConfigInt("Startup_Links");
 	Random_Probability = GetConfigFloat("Random_Probability");
 	Delete_Probability = GetConfigFloat("Delete_Probability");
 
@@ -33,12 +34,10 @@ void LinksAspect::InitializeAspect()
 
 	// Initialize the link elements...
 	Members = this->begin->GetSize();
-	int qqq=0;
 	LinksInfo *element;
 	for (Population::Iterator agentId = this->begin;
 		agentId != this->end; ++agentId)
 	{
-		qqq++;
 		 element = (*this)[*agentId];
 		 element->Degree = 0;
 		 element->Predecesors = NULL;
@@ -154,6 +153,50 @@ if (agentLinkInfo->Table.size != agentLinkInfo->Degree)
 	  }
 	} // end of the while
   } // end of the for... agents
+}
+
+void LinksAspect::Start()
+{
+  int nLinks = (int) (Startup_Links * this->begin->GetSize());
+
+  /*All probabilities are probability rates. Hence we multiply these P by the coarse
+  grain of time evolution DT*/
+  LinksInfo *agentLinkInfo;
+  LinksInfo *randomLinkInfo;
+  int randomId;
+  int agentId;
+
+  int linksCreated = 0;
+
+  while (linksCreated < nLinks)
+  {
+      for (Population::Iterator agentIditer = this->begin;
+                            agentIditer != this->end; ++agentIditer)
+      {
+        agentId = *agentIditer;
+        /**********************************************************************************/
+        /* Create contacts from friends of friends or random                              */
+        /**********************************************************************************/
+        agentLinkInfo = (*this)[agentId];
+
+        /* Find a contact */
+        randomId = agentId;
+        while (randomId == agentId)
+        {
+            int m = (int)floor(Members * ran1(Seed));
+            Population::Iterator iter = this->begin;
+            iter += m; // fetches to the selected guy
+            randomId = *iter;
+        }
+        /* In this case we want a different m != m */
+        randomLinkInfo = (*this)[randomId];
+        if (must_create_new_link(agentId, randomId))
+            insert_biedge(agentId, randomId, agentLinkInfo, randomLinkInfo);
+        linksCreated++;
+        if (linksCreated >= nLinks)
+            break;
+      } // end of the for... agents
+	} // end of the while
 }
 
 void LinksAspect::insert_biedge(int i, int j)

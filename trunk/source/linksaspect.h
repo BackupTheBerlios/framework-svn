@@ -25,6 +25,7 @@ class LinksAspect : public AspectBase
 {
 public:
 	void Evolve();
+	void Start();
 	void InitializeAspect();
 	int GetInfoSize();
 	LinksInfo * operator[](key agentId);
@@ -50,6 +51,7 @@ private:
 
 	float Friend_Probability;
 	float Random_Probability;
+	float Startup_Links;
 	/*float Alfa;*/
 	/*float Homophilia;*/
 	/*float Heterophilia;*/
