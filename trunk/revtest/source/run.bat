@@ -1,1 +1,0 @@
-release\framework.exe netmodel.xml
