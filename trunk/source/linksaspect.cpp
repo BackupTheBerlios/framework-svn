@@ -55,8 +55,6 @@ void LinksAspect::Evolve()
   ListElmt  *prev;
   int n, m;
 
-
-
   /*All probabilities are probability rates. Hence we multiply these P by the coarse
   grain of time evolution DT*/
   LinksInfo *agentLinkInfo;
@@ -82,8 +80,8 @@ void LinksAspect::Evolve()
     /**********************************************************************************/
     agentLinkInfo = (*this)[agentId];
 
-if (agentLinkInfo->Table.size != agentLinkInfo->Degree)
-	throw ("Invalid data at agentLinkInfo");
+	if (agentLinkInfo->Table.size != agentLinkInfo->Degree)
+		throw ("Invalid data at agentLinkInfo");
 
 	/* Explore one friend of friend with probability Friend_Probability * DT */
 	if (agentLinkInfo->Degree > 0 && ran1(Seed) < Friend_Probability * DT)
@@ -353,23 +351,30 @@ void LinksAspect::ShowValues(int agentId, std::vector <char *> & fields,
 		if (strcmp(fields[n], "Links")		 ==0 ||
 		    strcmp(fields[n], "LinksUnique") ==0)
 		{
-			bool unique = (strcmp(fields[n], "LinksUnique")==0);
-			// string data type
-			char *buffer;
-			buffer = new char[agentInfo->Degree * 11 + 1];
-			char *ptr = buffer;
-			for (ListElmt *element = agentInfo->Table.head; element != NULL; element = element->next)
+			if (agentInfo->Degree == 0)
 			{
-				if (!unique || agentId < element->data->v2)
-				{
-					sprintf(ptr,"%#.8X,", element->data->v2);
-					ptr+=11;
-				}
+				values[n] = varValue('\0');
 			}
-			if (ptr != buffer)ptr--;
-			*ptr  ='\0';
-			values[n] = varValue(buffer);
-			delete(buffer);
+			else
+			{
+				bool unique = (strcmp(fields[n], "LinksUnique")==0);
+				// string data type
+				char *buffer;
+				buffer = new char[agentInfo->Degree * 11 + 1];
+				char *ptr = buffer;
+				for (ListElmt *element = agentInfo->Table.head; element != NULL; element = element->next)
+				{
+					if (!unique || agentId < element->data->v2)
+					{
+						sprintf(ptr,"%#.8X,", element->data->v2);
+						ptr+=11;
+					}
+				}
+				if (ptr != buffer)ptr--;
+				*ptr  ='\0';
+				values[n] = varValue(buffer);
+				delete(buffer);
+			}
 		}
 		else
 		{

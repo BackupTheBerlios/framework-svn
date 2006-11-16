@@ -56,10 +56,11 @@
 			<Filename>nodos_all.txt</Filename>
 			<Headers>Yes</Headers> <!-- Values: yes (default) / no  -->
 			<Population>Personas</Population>
-            <RestartEveryCycle>No</RestartEveryCycle> <!-- Values: yes / no (default) -->
-            <Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+      <RestartEveryCycle>No</RestartEveryCycle> <!-- Values: yes / no (default) -->
+      <Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
 			<Type>List</Type>
-			<Loops>1000</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
+      <StartLoop>1</StartLoop>  <!-- Values: 1 (default) to loops  -->
+      <Loops>1000</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
 			<Fields>
 				<Geography>
 					<Field>X</Field>
@@ -87,7 +88,8 @@
 			<Population>Personas</Population>
 			<Type>Aggregate</Type>
 			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
-			<Loops>1000</Loops>
+      <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
+      <Loops>1000</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional

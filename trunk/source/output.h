@@ -33,6 +33,7 @@ public:
 	bool	IsAggregate;
 	vector <FieldGroup *> FieldGroups;
 	int		Loops;
+	int		StartLoop;
 	double	Timespan;
 	double	lastTime;
 	bool	restarteverycycle;

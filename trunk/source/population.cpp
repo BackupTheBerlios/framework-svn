@@ -118,6 +118,7 @@ void Population::CreateOutputs()
 		char *populationName = trygetchildxmlnodestringvalue(outputinfo, "Population");
 		char *typeName = trygetchildxmlnodestringvalue(outputinfo, "Type");
 		int loops = getchildxmlnodeintvalue(outputinfo, "Loops", 0xFFFFFF);
+		int startloop = getchildxmlnodeintvalue(outputinfo, "StartLoop", 1);
 		int timespan = getchildxmlnodeintvalue(outputinfo, "Timespan", 0xFFFFFF);
 		bool restarteverycycle = getchildxmlnodeboolvalue(outputinfo, "RestartEveryCycle", false);
 		bool enabled = getchildxmlnodeboolvalue(outputinfo, "Enabled", true);
@@ -146,6 +147,7 @@ void Population::CreateOutputs()
 		output->Headers = headers;
 		output->IsAggregate = typeIsAggregate;
 		output->Loops = loops;
+		output->StartLoop = startloop-1;
 		output->Timespan= timespan;
 		output->lastTime = t; // initialize time
 		output->restarteverycycle = restarteverycycle;
@@ -401,6 +403,7 @@ void Population::Iterate(int times)
 	double span;
 	double est;
 	double avg;
+	double avg2;
 	//time(&start_time);
 	start_time = get_time();
 	for (int n = 0; n < times; n++)
@@ -415,12 +418,16 @@ void Population::Iterate(int times)
 				avg = (double) span / n;
 			else
 				avg = 0;
+			if (span > 0)
+				avg2 = (double) n / span;
+			else
+				avg2 = 0;
 			est = (double) (times * avg);
-			avg = floor(avg * 10000) / 10000;
+			avg2 = floor(avg2 * 100) / 100;
 			std::cout << "(" << format2((int)pc) << "% of " << times << ") - "
 				<< "Elapsed: " << format(span) << " - "
 				<< "Estimated: " << format(est) << " - "
-				<< "Secs/loop: " << avg << "\n";
+				<< "Loops/sec: " << avg2 << "\n";
 			last = pc;
 		}
 
@@ -453,10 +460,8 @@ void Population::Iterate()
 void Population::_iterate()
 {
     for (vector<AspectBase *>::size_type a = 0; a < _runAspects.size(); a++)
-	{
 		_runAspects[a]->Evolve();
-		doOutput();
-	}
+	doOutput();
 	_history++;
 }
 void Population::doOutput()
@@ -472,7 +477,7 @@ void Population::doOutput()
 		Output *out = _outputs[n];
 		//time_t t; time(&t);
 		double t = get_time();
-		if (out->enabled && (_history % out->Loops == 0 ||  (t - out->lastTime) > out->Timespan))
+		if (out->enabled && ((_history % (out->Loops - out->StartLoop) == 0 && _history >= out->StartLoop ||  (t - out->lastTime) > out->Timespan))
 		{
 			// Le toca...
 			out->lastTime = t;
