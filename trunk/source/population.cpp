@@ -477,7 +477,7 @@ void Population::doOutput()
 		Output *out = _outputs[n];
 		//time_t t; time(&t);
 		double t = get_time();
-		if (out->enabled && ((_history % (out->Loops - out->StartLoop) == 0 && _history >= out->StartLoop ||  (t - out->lastTime) > out->Timespan))
+		if (out->enabled && ((_history % (out->Loops - out->StartLoop) == 0 && _history >= out->StartLoop) ||  (t - out->lastTime) > out->Timespan))
 		{
 			// Le toca...
 			out->lastTime = t;
