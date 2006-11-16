@@ -47,6 +47,8 @@ void SocialCircleAspect::ShowValues(int agentId, std::vector <char *> & fields,
 }
 void SocialCircleAspect::ReleaseAspect()
 {
+	if (this->_initialized == false) return;
+
 	delete(_circleSizes);
 }
 int SocialCircleAspect::CircleSizeOfAgent(int agentId)

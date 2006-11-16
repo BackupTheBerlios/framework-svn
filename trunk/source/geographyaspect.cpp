@@ -44,7 +44,7 @@ GeographyInfo * GeographyAspect::operator[](key agentId)
 
 void GeographyAspect::ReleaseAspect()
 {
-
+	if (this->_initialized == false) return;
 }
 
 void GeographyAspect::ShowValues(int agentId, std::vector <char *> & fields,

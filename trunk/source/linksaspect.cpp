@@ -11,6 +11,7 @@ int LinksAspect::GetInfoSize()
 }
 void LinksAspect::InitializeAspect()
 {
+	_initialized = true;
 	// Evaluation buffers
 	_lastPrecSize = -1;
 	fifov = NULL;
@@ -320,6 +321,9 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 
 void LinksAspect::ReleaseAspect()
 {
+	if (this->_initialized == false)
+		return;
+
 	for (Population::Iterator agentId = this->begin;
 		agentId != this->end; ++agentId)
 	{

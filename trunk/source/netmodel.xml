@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <ModelConfiguration>
 	<Run>
-		<Loops>100000</Loops> <!-- default: 1-->
-		<StatusUpdateStep>5</StatusUpdateStep>
+		<Loops>1000000</Loops> <!-- default: 1-->
+		<StatusUpdateStep>10</StatusUpdateStep><!-- Seconds between updates of status in the console (default: 1, 0=No update) -->
 	</Run>
 	<Globals>
 		<DeltaT>1</DeltaT> <!-- default: 1-->
 	</Globals>
 	<Populations>
   	<Personas>
-			<Size>1000</Size>
+			<Size>10000</Size>
 			<Aspects>
 				<EducationLevel/>
 				<Distance/>
@@ -25,7 +25,7 @@
 			<Friend_Probability>1</Friend_Probability>
 			<Random_Probability>0.1</Random_Probability>
 			<Delete_Probability>0.1</Delete_Probability>
-			<Startup_Links>1.0</Startup_Links>
+			<Startup_Links>1.0</Startup_Links> <!-- Number of links, express in population size levels (0.5 = 1 degree network) -->
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
 			<Levels>10</Levels>
@@ -84,7 +84,7 @@
 		</Output>
 		<Output>
 			<Filename>nodos_summary.txt</Filename>
-			<Headers>Yes</Headers>
+			<Headers>No</Headers>
 			<Population>Personas</Population>
 			<Type>Aggregate</Type>
 			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
@@ -102,11 +102,35 @@
 					<Field Operation="Average">Clustering</Field>
 					<Field Operation="Max">MaxDiameter</Field>
 					<!--Field Operation="Average">Betweenness</Field-->
-					<!--Field Operation="Count" Value="0">Degree</Field>
+					<Field Operation="Count" Value="0">Degree</Field>
 					<Field Operation="Count" Value="1">Degree</Field>
-					<Field Operation="Count" Value="2">Degree</Field-->
+					<Field Operation="Count" Value="2">Degree</Field>
+          <Field Operation="Count" Value="4">Degree</Field>
+          <Field Operation="Count" Value="5">Degree</Field>
 				</Links>
 			</Fields>
 		</Output>
+    <Output>
+      <Headers>Yes</Headers>
+      <Population>Personas</Population>
+      <Type>Aggregate</Type>
+      <Enabled>Yes</Enabled>  <!-- Values: yes (default) / no  -->
+      <RestartEveryCycle>Yes</RestartEveryCycle>  <!-- Values: yes / no (default) -->
+      <StartLoop>1</StartLoop>   <!-- Values: 1 (default) to loops  -->
+      <Loops>100</Loops>
+      <Fields>
+        <Links>
+          <!-- [Operation] = optional
+								Valid operations are:
+								Average, Sum, Min, Max, Median, Count,
+								Percentaje (usage: Percentage value="value")
+						 Default operation is Average. -->
+          <Field Operation="Average">Degree</Field>
+          <Field Operation="Sum">Degree</Field>
+          <Field Operation="Average">Clustering</Field>
+          <Field Operation="Max">MaxDiameter</Field>
+        </Links>
+      </Fields>
+    </Output>
 	</Outputs>
 </ModelConfiguration>

@@ -3,6 +3,7 @@
 AspectBase::AspectBase()
 {
 	_infosize = 0;
+	_initialized = false;
 	ReferenceCount = 0;
 	end = 0;
 }
@@ -28,6 +29,7 @@ void AspectBase::Initialize()
 {
 	_infosize = GetInfoSize();
 	this->InitializeAspect();
+	this->_initialized = true;
 }
 
 void AspectBase::AppendBlock(unsigned int size)

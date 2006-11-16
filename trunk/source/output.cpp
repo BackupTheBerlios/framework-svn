@@ -21,6 +21,16 @@ void Output::CheckFileOpen()
 	if (this->File != NULL)
 		return;
 
+	this->_fileOwner = true;
+	this->_wroteHeaders = false;
+	
+	// Goes to screen?
+	if (this->Filename == NULL)
+	{
+		this->File = stdout;
+		return;
+	}
+
 	// Is opened by another output? (shares the open handle)
 	for (std::vector <Output *>::size_type o = 0; o < outputs.size(); o++)
 		if (strcmp(this->Filename, outputs[o]->Filename) == 0
@@ -36,8 +46,6 @@ void Output::CheckFileOpen()
 	this->File = fopen(this->Filename, "w");
 	if (this->File == NULL)
 		throw "Could not open file: " + string(this->Filename);
-	this->_fileOwner = true;
-	this->_wroteHeaders = false;
 }
 
 void Output::CheckFileHeaders()
@@ -64,9 +72,12 @@ void Output::CheckFileClose()
 }
 void Output::Close()
 {
-	if (this->File != NULL && this->Filename != NULL && this->_fileOwner)
+	if (this->File != NULL && this->_fileOwner)
 	{
-		fclose(this->File);
-		this->File = NULL;
+		if (this->Filename != NULL)
+		{
+			fclose(this->File);
+			this->File = NULL;
+		}
 	}
 }

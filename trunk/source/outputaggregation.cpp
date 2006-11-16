@@ -60,7 +60,24 @@ void OutputAggregation::ProcessValues(varValue *values)
 					_results[n] = values[n];
 				break;
 			case Count:
-				++_results[n];
+				if ((*_fieldCriteria)[n] == NULL)
+					++_results[n];
+				else
+				{
+					if (values[n].type == T_String)
+					{
+						varValue sv = values[n];
+						if (sv.GetStringValue() == string((*_fieldCriteria)[n]))
+						{
+							++_results[n];
+						}
+					}
+					else
+					{
+						if (values[n].GetNumericValue() == atof((*_fieldCriteria)[n]))
+							++_results[n];
+					}
+				}
 				break;
 			case Percentage:
 				if (values[n].type == T_String)

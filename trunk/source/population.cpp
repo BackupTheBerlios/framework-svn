@@ -123,8 +123,8 @@ void Population::CreateOutputs()
 		bool restarteverycycle = getchildxmlnodeboolvalue(outputinfo, "RestartEveryCycle", false);
 		bool enabled = getchildxmlnodeboolvalue(outputinfo, "Enabled", true);
 		// Checks pointers and names
-		if (filename == NULL)
-			throw ("Output config error: filename for output block was not found.");
+		//if (filename == NULL)
+		//	throw ("Output config error: filename for output block was not found.");
 		if (populationName == NULL)
 			throw ("Output config error: population for output block was not found.");
 		if (typeName == NULL)
@@ -201,7 +201,7 @@ void Population::CreateOutputs()
 							op = Count;
 							char *valueString = getchildxmlnodeattributestringvalue(fieldinfo, "Value");
 							if (valueString == 0)
-								value = "\0";
+								value = NULL;
                             else
                                 value = valueString;
 						}
@@ -392,7 +392,7 @@ void Population::Iterate(int times)
 	_history = 0;
 	float pc;
 	struct basicxmlnode *run = getchildxmlnode(_rootConfig, "Run");
-	int interval = getchildxmlnodeintvalue(run, "StatusUpdateStep");
+	int interval = getchildxmlnodeintvalue(run, "StatusUpdateStep", 1);
 	double last = -interval;
 	//time_t start_time;
 	//time_t current_time;
@@ -404,14 +404,19 @@ void Population::Iterate(int times)
 	double est;
 	double avg;
 	double avg2;
-	//time(&start_time);
+	// Toma la hora para calculos
 	start_time = get_time();
+	// Toma la hora para loops
+	int timespan = interval;
+	double last_time = start_time;
+	// Empieza...
 	for (int n = 0; n < times; n++)
 	{
-		pc = ((float)n) / times * 100;
-		if (last + interval <= pc)
+		current_time = get_time();
+		if (timespan >> 0 && current_time - last_time > timespan)
 		{
-			//time(&current_time);
+			// Le toca...
+			pc = ((float)n) / times * 100;
 			current_time = get_time();
 			span = current_time - start_time;
 			if (n > 0)
@@ -428,6 +433,8 @@ void Population::Iterate(int times)
 				<< "Elapsed: " << format(span) << " - "
 				<< "Estimated: " << format(est) << " - "
 				<< "Loops/sec: " << avg2 << "\n";
+			// 	
+			last_time = current_time;
 			last = pc;
 		}
 

@@ -55,6 +55,8 @@ public:
 	void			LoadAspects(std::vector <AspectBase *> &_aspects);
 	void virtual	ShowValues(int agentId, std::vector <char *> &fields,
 								 varValue * values) = 0;
+protected:
+	bool						_initialized;
 private:
 	std::vector <char *>		_data;
 	std::vector <AspectBase *>	_aspects;
