@@ -232,6 +232,29 @@ void Population::CreateOutputs()
 
 						group->FieldOperations.push_back(op);
 					} // endif is aggregate
+					char *filterString = getchildxmlnodeattributestringvalue(fieldinfo, "Filter");
+					if (filterString != NULL)
+					{
+					    FieldFilter *filter = new FieldFilter();
+					    // Parse the field filter
+					    // 1. Operator
+					    char *posEnd;
+					    char *posStart;
+					    FilterOperation fo;
+					    ParseFilterString(filterString, &fo, &posStart, &posEnd);
+					    filter->Operator=fo;
+					    // 2. Value and field
+					    filter->retValues = posEnd;
+                        char *fieldname = new char[posStart-filterString+1];
+                        fieldname[posStart-filterString]='\0';
+                        strncpy(fieldname, filterString, posStart-filterString);
+                        filter->Field = fieldname;
+                        // Pushes the result
+                        group->FieldFilters.push_back(filter);
+					}
+					else
+                        group->FieldFilters.push_back(NULL);
+
 					group->FieldCriteria.push_back(value);
 					// loops
 					fieldinfo = getchildxmlnode(aspectfield, cf++);
@@ -241,7 +264,8 @@ void Population::CreateOutputs()
 				//
 				group->OutputAggregationManager.Initialize(&group->FieldNames,
 													&group->FieldOperations,
-													&group->FieldCriteria);
+													&group->FieldCriteria,
+													&group->FieldFilters);
 				// appends the field vector
 				output->FieldGroups.push_back(group);
 			}
@@ -255,6 +279,67 @@ void Population::CreateOutputs()
 	}
 
 }
+
+void Population::ParseFilterString(char *filterString, FilterOperation *op, char **posStart, char **posEnd)
+{
+    char *posFind;
+    posFind = strstr(filterString,">=");
+    if ( posFind != 0)
+    {
+        *op = EqualOrGreaterThan;
+        *posStart = posFind;
+        *posEnd = posFind+2;
+        return;
+    }
+    posFind = strstr(filterString,"<=");
+    if ( posFind != 0)
+    {
+        *op = EqualOrLowerThan;
+        *posStart = posFind;
+        *posEnd = posFind+2;
+        return;
+    }
+    posFind = strstr(filterString,"!=");
+    if (posFind == NULL) posFind = strstr(filterString,"<>");
+
+    if ( posFind != 0)
+    {
+        *op = NoEqual;
+        *posStart = posFind;
+        *posEnd = posFind+2;
+        return;
+    }
+
+    posFind = strstr(filterString,">");
+    if ( posFind != 0)
+    {
+        *op = GreaterThan;
+        *posStart = posFind;
+        *posEnd = posFind+1;
+        return;
+    }
+
+    posFind = strstr(filterString,"<");
+    if ( posFind != 0)
+    {
+        *op = LowerThan;
+        *posStart = posFind;
+        *posEnd = posFind+1;
+        return;
+    }
+
+    posFind = strstr(filterString,"=");
+    if ( posFind != 0)
+    {
+        *op = Equal;
+        *posStart = posFind;
+        *posEnd = posFind+1;
+        return;
+    }
+
+    else throw("Output config error: operand for filter is not valid.");
+}
+
 Population::SubPopulation * Population::getSubPopulationByName(char *populationName, int &id)
 {
 	std::string name = populationName;

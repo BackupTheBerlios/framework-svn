@@ -5,6 +5,7 @@
 
 using std::vector;
 using std::string;
+
 #ifndef _OUTPUT_AG
 	#define _OUTPUT_AG
 
@@ -22,7 +23,23 @@ enum FieldOperation
 	Percentage
 };
 
+enum FilterOperation
+{
+	Equal,
+	NoEqual,
+	GreaterThan,
+	LowerThan,
+	EqualOrGreaterThan,
+	EqualOrLowerThan
+};
 
+struct FieldFilter
+{
+    public:
+        char                    *Field;
+        char                    *retValues;
+        FilterOperation         Operator;
+};
 
 class OutputAggregation
 {
@@ -31,7 +48,8 @@ class OutputAggregation
         ~OutputAggregation();
         void Initialize (	vector <char *> *fieldNames,
 							vector <FieldOperation> *fieldOperations,
-                            vector <char *> *fieldCriteria);
+                            vector <char *> *fieldCriteria,
+                            vector <FieldFilter *> *fieldFilter);
         void ProcessValues(varValue *values);
         void Resolve(void);
         void Clear(void);
@@ -46,6 +64,7 @@ class OutputAggregation
     private:
         vector <char *>				*_fieldNames;
         vector <FieldOperation>		*_fieldOperations;
+        vector <FieldFilter *>		*_fieldFilter;
         vector <char *>				*_fieldCriteria;
         vector <varValue>		_results;
         int							*_count;
@@ -56,6 +75,7 @@ class OutputAggregation
         void						copyvector(vector <varValue> &results, varValue *values);
         char						*operationToText(FieldOperation operation, char *buffer);
 		void						variantToStringFile(FILE *file, varValue &value);
+		bool                        EvaluateFilter(FieldFilter* _fieldFilter, vector <char *> *_fieldNames, varValue *values);
 
 };
 

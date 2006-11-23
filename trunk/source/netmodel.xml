@@ -70,13 +70,14 @@
 					<Field>Level</Field>
 				</EducationLevel>
 				<Links>
-					<!--<Field>Degree</Field>
+					<Field>Degree</Field>
+					<Field Filter="Degree>1">Clustering</Field>
 					<Field>Clustering</Field>
 					<Field>MeanShortest</Field>
 					<Field>Closeness</Field>
 					<Field>Betweenness</Field>
 					<Field>SizeComponent</Field>
-					<Field>MaxDiameter</Field-->
+					<Field>MaxDiameter</Field>
 					<!--Field>Links</Field-->
 					<Field>LinksUnique</Field>
 				</Links>
@@ -118,7 +119,7 @@
 			<Type>Aggregate</Type>
 			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
             <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
-      <Loops>10</Loops>
+            <Loops>10</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional
@@ -126,6 +127,7 @@
 								Average, Sum, Min, Max, Median, Count,
 								Percentaje (usage: Percentage value="value")
 						 Default operation is Average. -->
+					<Field Operation="Average">Degree</Field>
 					<Field Operation="Average">Degree</Field>
 					<Field Operation="Average_positive">Clustering</Field>
 					<Field Operation="Count_positive">Clustering</Field>

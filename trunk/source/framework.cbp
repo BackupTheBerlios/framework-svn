@@ -7,7 +7,7 @@
 		<Option makefile="Makefile"/>
 		<Option makefile_is_custom="0"/>
 		<Option default_target="1"/>
-		<Option active_target="1"/>
+		<Option active_target="0"/>
 		<Option compiler="0"/>
 		<Build>
 			<Target title="Debug">
@@ -238,6 +238,9 @@
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
+			<Breakpoint line="118" enabled="1" pass="0" />
+			<Breakpoint line="43" enabled="1" pass="0" />
+			<Breakpoint line="45" enabled="1" pass="0" />
 		</Unit>
 		<Unit filename="outputaggregation.h">
 			<Option compilerVar=""/>
@@ -250,6 +253,11 @@
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
+			<Breakpoint line="267" enabled="1" pass="0" />
+			<Breakpoint line="268" enabled="1" pass="0" />
+			<Breakpoint line="251" enabled="1" pass="0" />
+			<Breakpoint line="243" enabled="1" pass="0" />
+			<Breakpoint line="603" enabled="1" pass="0" />
 		</Unit>
 		<Unit filename="population.h">
 			<Option compilerVar=""/>

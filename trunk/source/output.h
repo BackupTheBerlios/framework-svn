@@ -15,9 +15,11 @@ struct FieldGroup
 	OutputAggregation 			OutputAggregationManager;
 	vector <char *>				FieldNames;
 	vector <char *>				FieldCriteria;
+	vector <FieldFilter *>		FieldFilters;
 	vector <FieldOperation>		FieldOperations;
 	varValue *					retValues;
 };
+
 
 class Output
 {

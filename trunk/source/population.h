@@ -199,6 +199,7 @@ class Population
 		void _iterate();
 		void doOutput();
 		void Initialize();
+		void ParseFilterString(char *filterString, FilterOperation *op, char **posStart, char **posEnd);
 		void CreateOutputs(void);
 		void LoadSettings();
 		std::string format(double span);

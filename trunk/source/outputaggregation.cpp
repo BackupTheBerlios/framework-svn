@@ -7,11 +7,13 @@ OutputAggregation::OutputAggregation()
 
 void OutputAggregation::Initialize (vector <char *>			*fieldNames,
 									vector <FieldOperation> *fieldOperations,
-									vector <char *>			*fieldCriteria)
+									vector <char *>			*fieldCriteria,
+									vector <FieldFilter *>	*fieldFilter)
 {
 	_fieldOperations = fieldOperations;
 	_fieldCriteria = fieldCriteria;
 	_fieldNames = fieldNames;
+	_fieldFilter = fieldFilter;
 	_resolved = false;
 	_count = new int[_fieldNames->size()];
 	startResults();
@@ -36,79 +38,160 @@ void OutputAggregation::ProcessValues(varValue *values)
 {
 	if (_fieldOperations->size() == 0)
 	{	// No tiene que hacer ningún aggregate... copia valores
-		copyvector(_results, values);
+		_results.clear();
+        for(vector <varValue>::size_type n = 0; n < this->_fieldNames->size(); n++)
+            if ((*_fieldFilter)[n] == NULL || EvaluateFilter((*_fieldFilter)[n], _fieldNames, values))
+                _results.push_back(values[n]);
+            else
+                _results.push_back(new varValue(""));
 		return;
 	}
 	// Procesa para el aggregate...
 	for(vector <double>::size_type n = 0; n < _fieldOperations->size(); n++)
 	{
-		//double result = variantGetValue(&_results[n]);
-		//double value = variantGetValue(&values[n]);
-
-		switch((*_fieldOperations)[n])
-		{
-			case Sum:
-			case Average:
-				_results[n] += values[n];
-				break;
-			case Average_positive:
-                if (values[n].GetNumericValue() >= 0)
+	    if ((*_fieldFilter)[n] == NULL || EvaluateFilter((*_fieldFilter)[n], _fieldNames, values))
+        {
+            switch((*_fieldOperations)[n])
+            {
+                case Sum:
+                case Average:
                     _results[n] += values[n];
-                break;
-			case Min:
-				if (values[n] < _results[n] || _count[n] == 0)
-					_results[n] = values[n];
-				break;
-			case Max:
-				if (values[n] > _results[n] || _count[n] == 0)
-					_results[n] = values[n];
-				break;
-			case Count:
-				if ((*_fieldCriteria)[n] == NULL)
-					++_results[n];
-				else
-				{
-					if (values[n].type == T_String)
+                    break;
+                case Average_positive:
+                    if (values[n].GetNumericValue() >= 0)
+                    {
+                        _results[n] += values[n];
+                    }
+                    else
+                        _count[n]--; // se asegura de que los demas no sean contabilizados
+                    break;
+                case Min:
+                    if (values[n] < _results[n] || _count[n] == 0)
+                        _results[n] = values[n];
+                    break;
+                case Max:
+                    if (values[n] > _results[n] || _count[n] == 0)
+                        _results[n] = values[n];
+                    break;
+                case Count:
+                    if ((*_fieldCriteria)[n] == NULL)
+                        ++_results[n];
+                    else
+                    {
+                        if (values[n].type == T_String)
+                        {
+                            varValue sv = values[n];
+                            if (sv.GetStringValue() == string((*_fieldCriteria)[n]))
+                            {
+                                ++_results[n];
+                            }
+                        }
+                        else
+                        {
+                            if (values[n].GetNumericValue() == atof((*_fieldCriteria)[n]))
+                                ++_results[n];
+                        }
+                    }
+                    break;
+                case Count_positive:
+                     if (values[n].GetNumericValue() >= 0)
+                            ++_results[n];
+                     break;
+                case Percentage:
+                    if (values[n].type == T_String)
+                    {
+                        varValue sv = values[n];
+                        if (sv.GetStringValue() == string((*_fieldCriteria)[n]))
+                        {
+                            ++_results[n];
+                        }
+                        else
+                            _count[n]--;
+                    }
+                    else
+                        if (values[n].GetNumericValue() == atof((*_fieldCriteria)[n]))
+                            ++_results[n];
+                        else
+                            _count[n]--;
+                    break;
+                    /*
+                    Faltan implementar:
+                    Median,
+                    StdDev
+                    */
+                default:
+                    throw("Unsupported operation.");
+            }
+            _count[n]++;
+        }
+	}
+}
+
+bool OutputAggregation::EvaluateFilter(FieldFilter* _fieldFilter, vector <char *> *_fieldNames, varValue *values)
+{
+    // Busca el field con ese valor
+    for (int n=0; n<(int)_fieldNames->size(); n++)
+        if (strcmp((*_fieldNames)[n], _fieldFilter->Field) == 0)
+        {   // Usa el comparador
+            switch(_fieldFilter->Operator)
+            {
+                case 	Equal:
+                    if (values[n].type == T_String)
 					{
 						varValue sv = values[n];
-						if (sv.GetStringValue() == string((*_fieldCriteria)[n]))
-						{
-							++_results[n];
-						}
+						return (sv.GetStringValue() == string(_fieldFilter->retValues));
 					}
 					else
+						return (values[n].GetNumericValue() == atof(_fieldFilter->retValues));
+                    break;
+                case 	NoEqual:
+                   if (values[n].type == T_String)
 					{
-						if (values[n].GetNumericValue() == atof((*_fieldCriteria)[n]))
-							++_results[n];
+						varValue sv = values[n];
+						return (sv.GetStringValue() != string(_fieldFilter->retValues));
 					}
-				}
-				break;
-			case Count_positive:
-                 if (values[n].GetNumericValue() >= 0)
-                        ++_results[n];
-                 break;
-			case Percentage:
-				if (values[n].type == T_String)
-				{
-					varValue sv = values[n];
-					if (sv.GetStringValue() == string((*_fieldCriteria)[n]))
+					else
+						return (values[n].GetNumericValue() != atof(_fieldFilter->retValues));
+                    break;
+                case 	GreaterThan:
+                   if (values[n].type == T_String)
 					{
-						++_results[n];
+						varValue sv = values[n];
+						return (sv.GetStringValue() > string(_fieldFilter->retValues));
 					}
-				}
-				else
-					if (values[n].GetNumericValue() == atof((*_fieldCriteria)[n]))
-						++_results[n];
-				/*
-				Faltan implementar:
-				Median,
-				StdDev
-				*/
-			default:
-				throw("Unsupported operation.");
-		}
-		_count[n]++;
-	}
+					else
+						return (values[n].GetNumericValue() > atof(_fieldFilter->retValues));
+                    break;
+                case 	LowerThan:
+                   if (values[n].type == T_String)
+					{
+						varValue sv = values[n];
+						return (sv.GetStringValue() < string(_fieldFilter->retValues));
+					}
+					else
+						return (values[n].GetNumericValue() < atof(_fieldFilter->retValues));
+                    break;
+                case 	EqualOrGreaterThan:
+                   if (values[n].type == T_String)
+					{
+						varValue sv = values[n];
+						return (sv.GetStringValue() >= string(_fieldFilter->retValues));
+					}
+					else
+						return (values[n].GetNumericValue() >= atof(_fieldFilter->retValues));
+                    break;
+                case 	EqualOrLowerThan:
+                   if (values[n].type == T_String)
+					{
+						varValue sv = values[n];
+						return (sv.GetStringValue() <= string(_fieldFilter->retValues));
+					}
+					else
+						return (values[n].GetNumericValue() <= atof(_fieldFilter->retValues));
+                    break;
+            }
+        }
+    return false;
 }
 void OutputAggregation::BeginHeaders(FILE *file, bool isAggregate)
 {
