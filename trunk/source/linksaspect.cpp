@@ -2,8 +2,6 @@
 #include "linksaspect.h"
 #include "distributions.h"
 
-//#include "snet.h"
-//#define DT 1.0F
 
 int LinksAspect::GetInfoSize()
 {
@@ -22,7 +20,7 @@ void LinksAspect::InitializeAspect()
 	/*Alfa = GetConfigFloat("Alfa");*/
 	/*Homophilia = GetConfigFloat("Homophilia");*/
 	/*Heterophilia = GetConfigFloat("Heterophilia");*/
-    Startup_Links = GetConfigInt("Startup_Links");
+        Startup_Links = GetConfigFloat("Startup_Links");
 	Random_Probability = GetConfigFloat("Random_Probability");
 	Delete_Probability = GetConfigFloat("Delete_Probability");
 
@@ -74,7 +72,6 @@ void LinksAspect::Evolve()
   for (Population::Iterator agentIditer = this->begin;
 						agentIditer != this->end; ++agentIditer)
   {
-	  q++;
 	agentId = *agentIditer;
     /**********************************************************************************/
     /* Create contacts from friends of friends or random                              */
@@ -106,8 +103,10 @@ void LinksAspect::Evolve()
 		   we are not excluding the possibility of transitivity returns to another freind of n.
 		   There would be no problem with this, since insert biedge can deal with this*/
 		   int tertiusId = friendOfFriendId;
-		   if (must_create_new_link(agentId, tertiusId))
+		   if (must_create_new_link(agentId, tertiusId)){
 		   		insert_biedge(agentId, tertiusId, agentLinkInfo, friendOfFriendLinkInfo);
+
+		  }
 		}
 	}
 	/* Explore one contact at random with probability Random_Probability * DT */
@@ -123,22 +122,25 @@ void LinksAspect::Evolve()
 	  }
 	  /* In this case we want a different m != m */
 	  randomLinkInfo = (*this)[randomId];
-	  if (must_create_new_link(agentId, randomId))
+	  if (must_create_new_link(agentId, randomId)) {
 		insert_biedge(agentId, randomId, agentLinkInfo, randomLinkInfo);
+
+	  }
 	}
     /**********************************************************************************/
     /* Delete contacts with probability Delete_Probabilily * DT This runs for all links*/
     /**********************************************************************************/
+	int r=0;
 	element = agentLinkInfo->Table.head;
 	prev = NULL;
 	while(element != NULL)
 	{
-	  if (Members * ran1(Seed) < Delete_Probability * DT)
+	  if (ran1(Seed) < Delete_Probability * DT)
 	  {
-		/* note the normalization! */
 		deleteId = element->data->v2;
 		/* Link is always removed. It is also possible to weight this probability using distance */
 		delete_biedge(agentId, deleteId);
+
 
 		if (prev != NULL)
 			element = prev->next;
@@ -150,7 +152,9 @@ void LinksAspect::Evolve()
 		prev = element;
 		element = element->next;
 	  }
+	  r++;
 	} // end of the while
+	q++;
   } // end of the for... agents
 }
 
@@ -158,8 +162,6 @@ void LinksAspect::Start()
 {
   int nLinks = (int) (Startup_Links * this->begin->GetSize());
 
-  /*All probabilities are probability rates. Hence we multiply these P by the coarse
-  grain of time evolution DT*/
   LinksInfo *agentLinkInfo;
   LinksInfo *randomLinkInfo;
   int randomId;
@@ -173,9 +175,6 @@ void LinksAspect::Start()
                             agentIditer != this->end; ++agentIditer)
       {
         agentId = *agentIditer;
-        /**********************************************************************************/
-        /* Create contacts from friends of friends or random                              */
-        /**********************************************************************************/
         agentLinkInfo = (*this)[agentId];
 
         /* Find a contact */
@@ -189,23 +188,28 @@ void LinksAspect::Start()
         }
         /* In this case we want a different m != m */
         randomLinkInfo = (*this)[randomId];
-        if (must_create_new_link(agentId, randomId))
+        if (must_create_new_link(agentId, randomId)) {
             insert_biedge(agentId, randomId, agentLinkInfo, randomLinkInfo);
-        linksCreated++;
+            linksCreated++;
+        }
         if (linksCreated >= nLinks)
             break;
       } // end of the for... agents
 	} // end of the while
 }
 
-void LinksAspect::insert_biedge(int i, int j)
+
+ void LinksAspect::insert_biedge(int i, int j)
 {
 	insert_biedge(i, j, (*this)[i], (*this)[j]);
 }
 void LinksAspect::insert_biedge(int i, int j, LinksInfo *iInfo,
 								LinksInfo *jInfo)
 {
-   if (i == j) return; // cancel (target = source)
+   if (i == j) {
+
+	return; // cancel (target = source)
+   }
 
    Edge *edge1,*edge2;
    edge1 = (Edge *) malloc (sizeof (Edge));
@@ -229,7 +233,12 @@ void LinksAspect::adjlst_insert (LinksInfo *li, Edge *data)
   j = ((Edge *)data)->v2;
 
   for (element = li->Table.head; element != NULL; element = element->next)
-	if (j == element->data->v2) return; // cancel (target already exists)
+	if (j == element->data->v2)
+	{
+
+		return; // cancel (target already exists)
+	}
+
 
   // Adds the link
   list_ins_next(&li->Table, li->Table.tail, data);
@@ -296,26 +305,8 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 	but this can be modified as a generalized sum (e. g. Minkowsi metrics)*/
     proba = (float) ((p1+p2) / (2.0));
 	/*Second Normalization*/
-	if (_socialCircleAspect != NULL)
-	    /* VER LA JUSTIFICACION DE ESTO PARA CONVENCERME Y CONVENCER A PABLO!!!*/
-		proba /= _socialCircleAspect->CircleSizeOfAgent(agentId1); /* The population of that circle*/
 	if(ran1(Seed) < proba)
 		return true;
-   /*}
-   Different circle == random
-   else {
-	    if (_educationLevelAspect != NULL)
-			p1=(float)Heterophilia * _educationLevelAspect->pdistrHeterophilia(educationDistance);
-		else
-			p1=(float)Heterophilia;
-		p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
-		proba = (float) ((p1+p2) / (Heterophilia + 1.0));
-		Second Normalization
-		proba /= (float)Members;
-		if(ran1(Seed) < proba)
-			return true;
-   }
-   */
    return false;
 }
 

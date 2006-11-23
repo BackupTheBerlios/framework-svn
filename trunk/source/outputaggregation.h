@@ -11,12 +11,14 @@ using std::string;
 enum FieldOperation
 {
 	Average,
+	Average_positive,
 	Sum,
 	Min,
 	Max,
 	Median,
 	StdDev,
 	Count,
+	Count_positive,
 	Percentage
 };
 
@@ -33,8 +35,8 @@ class OutputAggregation
         void ProcessValues(varValue *values);
         void Resolve(void);
         void Clear(void);
-        void static BeginLine(FILE *file, int loop);
-        void static BeginLine(FILE *file, int loop, unsigned int agentId);
+        void static BeginLine(FILE *file, float loop);
+        void static BeginLine(FILE *file, float loop, unsigned int agentId);
         void static BeginHeaders(FILE *file, bool isAggregate);
         void static EndLine(FILE *file);
         void ShowValues(FILE *file);

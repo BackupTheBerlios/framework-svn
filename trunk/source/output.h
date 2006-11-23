@@ -32,7 +32,7 @@ public:
 	int		SubPopulationId;
 	bool	IsAggregate;
 	vector <FieldGroup *> FieldGroups;
-	int		Loops;
+	float	Loops;
 	int		StartLoop;
 	double	Timespan;
 	double	lastTime;

@@ -117,7 +117,7 @@ void Population::CreateOutputs()
 		bool headers = getchildxmlnodeboolvalue(outputinfo, "Headers", true);
 		char *populationName = trygetchildxmlnodestringvalue(outputinfo, "Population");
 		char *typeName = trygetchildxmlnodestringvalue(outputinfo, "Type");
-		int loops = getchildxmlnodeintvalue(outputinfo, "Loops", 0xFFFFFF);
+		float loops = getchildxmlnodedoublevalue(outputinfo, "Loops", 0xFFFFFF);
 		int startloop = getchildxmlnodeintvalue(outputinfo, "StartLoop", 1);
 		int timespan = getchildxmlnodeintvalue(outputinfo, "Timespan", 0xFFFFFF);
 		bool restarteverycycle = getchildxmlnodeboolvalue(outputinfo, "RestartEveryCycle", false);
@@ -190,6 +190,8 @@ void Population::CreateOutputs()
 					{
 						if (operationName == NULL || strcmp(operationName, "Average")==0)
 							op = Average;
+						else if (operationName == NULL || strcmp(operationName, "Average_positive")==0)
+							op = Average_positive;
 						else if (strcmp(operationName, "Sum")==0)
 							op = Sum;
 						else if (strcmp(operationName, "Min")==0)
@@ -205,6 +207,14 @@ void Population::CreateOutputs()
                             else
                                 value = valueString;
 						}
+						else if (strcmp(operationName, "Count_positive")==0)
+							op = Count_positive;
+						/*	char *valueString = getchildxmlnodeattributestringvalue(fieldinfo, "Value");
+							if (valueString == 0)
+								value = "\0";
+                            else
+                                value = valueString;
+						}*/
 						else if (strcmp(operationName, "Median")==0)
 							op = Median;
 						else if (strcmp(operationName, "StdDev")==0)
@@ -429,15 +439,14 @@ void Population::Iterate(int times)
 				avg2 = 0;
 			est = (double) (times * avg);
 			avg2 = floor(avg2 * 100) / 100;
-			std::cout << "(" << format2((int)pc) << "% of " << times << ") - "
+			std::cout << "(" << format2((int)pc) << "% of " << ((int)(times * this->_deltaT)) << ") - "
 				<< "Elapsed: " << format(span) << " - "
 				<< "Estimated: " << format(est) << " - "
 				<< "Loops/sec: " << avg2 << "\n";
-			// 	
+			//
 			last_time = current_time;
 			last = pc;
 		}
-
 		_iterate();
 		//callIterate();
 	}
@@ -484,62 +493,70 @@ void Population::doOutput()
 		Output *out = _outputs[n];
 		//time_t t; time(&t);
 		double t = get_time();
-		if (out->enabled && ((_history % (out->Loops - out->StartLoop) == 0 && _history >= out->StartLoop) ||  (t - out->lastTime) > out->Timespan))
+		if (out->enabled)
 		{
-			// Le toca...
-			out->lastTime = t;
-			int size = ((Population::SubPopulation *) out->SubPopulation)->GetSize();
-			// Se fija si tiene que abrir el archivo
-			out->CheckFileOpen();
-			// Write headers if it overwrites everytime
-			out->CheckFileHeaders();
-			// Hace el for de 1 a size de esa población
-			for (int i = 0; i < size; i++)
-			{
-				key agentId = MAKE_AGENT_ID(out->SubPopulationId, i);
-				if (out->IsAggregate == false)
-					OutputAggregation::BeginLine(out->File, this->_history, agentId);
+		    float a = out->Loops;
+		    float b = this->_deltaT;
+		    int LoopsByDelta = (int) round(out->Loops / this->_deltaT);
+            int StartLoopByDelta = (int) round(out->StartLoop / this->_deltaT);
+            bool bShow = ((_history - StartLoopByDelta) % LoopsByDelta  == 0 && _history >= StartLoopByDelta);
+            if ((bShow ||  (t - out->lastTime) > out->Timespan))
+            {
+                // Le toca...
+                out->lastTime = t;
+                int size = ((Population::SubPopulation *) out->SubPopulation)->GetSize();
+                // Se fija si tiene que abrir el archivo
+                out->CheckFileOpen();
+                // Write headers if it overwrites everytime
+                out->CheckFileHeaders();
+                // Hace el for de 1 a size de esa población
+                for (int i = 0; i < size; i++)
+                {
+                    key agentId = MAKE_AGENT_ID(out->SubPopulationId, i);
+                    if (out->IsAggregate == false)
+                        OutputAggregation::BeginLine(out->File, this->_history * this->_deltaT, agentId);
 
-				FieldGroup *fg;
-				// Se mueve por los fieldGroups
-				for (vector <FieldGroup *>::size_type g = 0;
-					g < out->FieldGroups.size(); g++)
-				{
-					fg = out->FieldGroups[g];
-					// Le pide los valores de los fields al aspect
-					// para ese agentid
-					fg->Aspect->ShowValues(agentId, fg->FieldNames, fg->retValues);
-					// Keeps values
-					fg->OutputAggregationManager.ProcessValues(fg->retValues);
-					// Si no hace aggregate, las muestra
-					if (out->IsAggregate == false)
-						fg->OutputAggregationManager.ShowValues(out->File);
-				}
-				if (out->IsAggregate == false)
-					OutputAggregation::EndLine(out->File);
+                    FieldGroup *fg;
+                    // Se mueve por los fieldGroups
+                    for (vector <FieldGroup *>::size_type g = 0;
+                        g < out->FieldGroups.size(); g++)
+                    {
+                        fg = out->FieldGroups[g];
+                        // Le pide los valores de los fields al aspect
+                        // para ese agentid
+                        fg->Aspect->ShowValues(agentId, fg->FieldNames, fg->retValues);
+                        // Keeps values
+                        fg->OutputAggregationManager.ProcessValues(fg->retValues);
+                        // Si no hace aggregate, las muestra
+                        if (out->IsAggregate == false)
+                            fg->OutputAggregationManager.ShowValues(out->File);
+                    }
+                    if (out->IsAggregate == false)
+                        OutputAggregation::EndLine(out->File);
 
-			}
-			if (out->IsAggregate == true)
-			{
-				OutputAggregation::BeginLine(out->File, this->_history);
-				for (vector <FieldGroup *>::size_type g = 0;
-								g < out->FieldGroups.size(); g++)
-				{
-					// Los muestra...
-					FieldGroup *fg = out->FieldGroups[g];
-					fg->OutputAggregationManager.ShowValues(out->File);
-				}
-				OutputAggregation::EndLine(out->File);
-			}
-			// Check close
-			out->CheckFileClose();
-		}
+                }
+                if (out->IsAggregate == true)
+                {
+                    OutputAggregation::BeginLine(out->File, this->_history * this->_deltaT);
+                    for (vector <FieldGroup *>::size_type g = 0;
+                                    g < out->FieldGroups.size(); g++)
+                    {
+                        // Los muestra...
+                        FieldGroup *fg = out->FieldGroups[g];
+                        fg->OutputAggregationManager.ShowValues(out->File);
+                    }
+                    OutputAggregation::EndLine(out->File);
+                }
+                // Check close
+                out->CheckFileClose();
+            }
+        }
 	}
 }
 void Population::Run()
 {
 	struct basicxmlnode *run = getchildxmlnode(_rootConfig, "Run");
-	int times = getchildxmlnodeintvalue(run, "Loops", 1);
+	int times = (int) round(getchildxmlnodeintvalue(run, "Loops", 1) / this->_deltaT);
 	std::cout << LINE;
     std::cout << "Running from empty net... 1 of " << times << " loops...\n";
     Iterate(times);

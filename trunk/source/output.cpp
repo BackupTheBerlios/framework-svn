@@ -23,7 +23,7 @@ void Output::CheckFileOpen()
 
 	this->_fileOwner = true;
 	this->_wroteHeaders = false;
-	
+
 	// Goes to screen?
 	if (this->Filename == NULL)
 	{
@@ -33,13 +33,13 @@ void Output::CheckFileOpen()
 
 	// Is opened by another output? (shares the open handle)
 	for (std::vector <Output *>::size_type o = 0; o < outputs.size(); o++)
-		if (strcmp(this->Filename, outputs[o]->Filename) == 0
+		if (outputs[o]->Filename != NULL && strcmp(this->Filename, outputs[o]->Filename) == 0
 			&& outputs[o]->File != NULL)
 		{
 			// gets a 'reference'
 			this->_fileOwner = false;
 			this->File = outputs[o]->File;
-			// done 
+			// done
 			return;
 		}
 	// Gets the file...
@@ -52,7 +52,7 @@ void Output::CheckFileHeaders()
 {
 	if (this->_wroteHeaders == false && this->Headers)
 	{
-		// Write headers	
+		// Write headers
 		this->_wroteHeaders = true;
 		OutputAggregation::BeginHeaders(this->File, this->IsAggregate);
 		for (vector <FieldGroup *>::size_type g = 0;

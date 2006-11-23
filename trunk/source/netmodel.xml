@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <ModelConfiguration>
 	<Run>
-		<Loops>1000000</Loops> <!-- default: 1-->
+		<Loops>100</Loops> <!-- default: 1-->
 		<StatusUpdateStep>10</StatusUpdateStep><!-- Seconds between updates of status in the console (default: 1, 0=No update) -->
 	</Run>
 	<Globals>
-		<DeltaT>1</DeltaT> <!-- default: 1-->
+		<DeltaT>0.1</DeltaT> <!-- default: 1-->
 	</Globals>
 	<Populations>
   	<Personas>
-			<Size>10000</Size>
+			<Size>1000</Size>
 			<Aspects>
 				<EducationLevel/>
 				<Distance/>
@@ -21,20 +21,20 @@
 	</Populations>
 	<Aspects>
 		<Links>
-			<Seed>25</Seed>
-			<Friend_Probability>1</Friend_Probability>
+			<Seed>-11</Seed>
+			<Friend_Probability>0.9</Friend_Probability>
 			<Random_Probability>0.1</Random_Probability>
 			<Delete_Probability>0.1</Delete_Probability>
-			<Startup_Links>1.0</Startup_Links> <!-- Number of links, express in population size levels (0.5 = 1 degree network) -->
+			<Startup_Links>0.5</Startup_Links> <!-- Number of links, express in population size levels (0.5 = 1 degree network) -->
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
-			<Levels>10</Levels>
-			<Beta> 1.0 </Beta>
+			<Levels>1</Levels>
+			<Beta> 0 </Beta>
 			<Seed>25</Seed>
 		</EducationLevel>
 		<SocialCircle><!-- dim[circ]-->
 			<Circles>1</Circles>
-			<Seed>25</Seed>
+			<Seed>20</Seed>
 		</SocialCircle>
 		<Distance>
 			<!-- Delta: Parameter for geographic distance
@@ -45,10 +45,10 @@
 			<Delta>1</Delta>
 		</Distance>
 		<Geography>
-			<Width>10</Width> <!-- dim[xc]-->
-			<Height>10</Height> <!-- dim[yc]-->
-			<Alfa>2.0</Alfa>
-			<Seed>25</Seed>
+			<Width>1</Width> <!-- dim[xc]-->
+			<Height>1</Height> <!-- dim[yc]-->
+			<Alfa>0</Alfa>
+			<Seed>-11</Seed>
 		</Geography>
 	</Aspects>
 	<Outputs>
@@ -60,15 +60,15 @@
       <Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
 			<Type>List</Type>
       <StartLoop>1</StartLoop>  <!-- Values: 1 (default) to loops  -->
-      <Loops>1000</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
+      <Loops>1</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
 			<Fields>
 				<Geography>
 					<Field>X</Field>
 					<Field>Y</Field>
 				</Geography>
-				<SocialCircle>
-					<Field>Circle</Field>
-				</SocialCircle>
+				<EducationLevel>
+					<Field>Level</Field>
+				</EducationLevel>
 				<Links>
 					<!--<Field>Degree</Field>
 					<Field>Clustering</Field>
@@ -89,7 +89,7 @@
 			<Type>Aggregate</Type>
 			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
       <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
-      <Loops>1000</Loops>
+      <Loops>0.1</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional
@@ -99,38 +99,42 @@
 						 Default operation is Average. -->
 					<Field Operation="Average">Degree</Field>
 					<Field Operation="Sum">Degree</Field>
-					<Field Operation="Average">Clustering</Field>
-					<Field Operation="Max">MaxDiameter</Field>
+					<!--Field Operation="Average">Clustering</Field-->
+					<Field Operation="Average_positive">Clustering</Field>
+					<Field Operation="Count_positive">Clustering</Field>
+					<!--Field Operation="Max">MaxDiameter</Field-->
 					<!--Field Operation="Average">Betweenness</Field-->
 					<Field Operation="Count" Value="0">Degree</Field>
 					<Field Operation="Count" Value="1">Degree</Field>
 					<Field Operation="Count" Value="2">Degree</Field>
-          <Field Operation="Count" Value="4">Degree</Field>
-          <Field Operation="Count" Value="5">Degree</Field>
+                    <Field Operation="Count" Value="4">Degree</Field>
+                    <Field Operation="Count" Value="5">Degree</Field>
 				</Links>
 			</Fields>
 		</Output>
-    <Output>
-      <Headers>Yes</Headers>
-      <Population>Personas</Population>
-      <Type>Aggregate</Type>
-      <Enabled>Yes</Enabled>  <!-- Values: yes (default) / no  -->
-      <RestartEveryCycle>Yes</RestartEveryCycle>  <!-- Values: yes / no (default) -->
-      <StartLoop>1</StartLoop>   <!-- Values: 1 (default) to loops  -->
-      <Loops>100</Loops>
-      <Fields>
-        <Links>
-          <!-- [Operation] = optional
+		<Output>
+			<Headers>Yes</Headers>
+			<Population>Personas</Population>
+			<Type>Aggregate</Type>
+			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+            <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
+      <Loops>10</Loops>
+			<Fields>
+				<Links>
+					<!-- [Operation] = optional
 								Valid operations are:
 								Average, Sum, Min, Max, Median, Count,
 								Percentaje (usage: Percentage value="value")
 						 Default operation is Average. -->
-          <Field Operation="Average">Degree</Field>
-          <Field Operation="Sum">Degree</Field>
-          <Field Operation="Average">Clustering</Field>
-          <Field Operation="Max">MaxDiameter</Field>
-        </Links>
-      </Fields>
-    </Output>
+					<Field Operation="Average">Degree</Field>
+					<Field Operation="Sum">Degree</Field>
+					<!--Field Operation="Average">Clustering</Field-->
+					<Field Operation="Average_positive">Clustering</Field>
+					<Field Operation="Count_positive">Clustering</Field>
+					<!--Field Operation="Max">MaxDiameter</Field-->
+					<!--Field Operation="Average">Betweenness</Field-->
+				</Links>
+			</Fields>
+		</Output>
 	</Outputs>
 </ModelConfiguration>

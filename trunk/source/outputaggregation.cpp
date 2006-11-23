@@ -2,7 +2,7 @@
 
 OutputAggregation::OutputAggregation()
 {
-	
+
 }
 
 void OutputAggregation::Initialize (vector <char *>			*fieldNames,
@@ -23,7 +23,7 @@ OutputAggregation::~OutputAggregation()
 		delete _count;
 	}
 }
-					
+
 void OutputAggregation::copyvector(vector <varValue> &results, varValue *values)
 {
 	results.clear();
@@ -44,13 +44,17 @@ void OutputAggregation::ProcessValues(varValue *values)
 	{
 		//double result = variantGetValue(&_results[n]);
 		//double value = variantGetValue(&values[n]);
-		
+
 		switch((*_fieldOperations)[n])
 		{
 			case Sum:
 			case Average:
 				_results[n] += values[n];
 				break;
+			case Average_positive:
+                if (values[n].GetNumericValue() >= 0)
+                    _results[n] += values[n];
+                break;
 			case Min:
 				if (values[n] < _results[n] || _count[n] == 0)
 					_results[n] = values[n];
@@ -79,6 +83,10 @@ void OutputAggregation::ProcessValues(varValue *values)
 					}
 				}
 				break;
+			case Count_positive:
+                 if (values[n].GetNumericValue() >= 0)
+                        ++_results[n];
+                 break;
 			case Percentage:
 				if (values[n].type == T_String)
 				{
@@ -99,7 +107,7 @@ void OutputAggregation::ProcessValues(varValue *values)
 			default:
 				throw("Unsupported operation.");
 		}
-		_count[n]++;		
+		_count[n]++;
 	}
 }
 void OutputAggregation::BeginHeaders(FILE *file, bool isAggregate)
@@ -129,6 +137,9 @@ char *OutputAggregation::operationToText(FieldOperation operation, char *buffer)
 	case Average:
 		strcpy(buffer, "mean");
 		break;
+	case Average_positive:
+		strcpy(buffer, "meanp");
+		break;
 	case Sum:
 		strcpy(buffer, "sum");
 		break;
@@ -146,6 +157,9 @@ char *OutputAggregation::operationToText(FieldOperation operation, char *buffer)
 		break;
 	case Count:
 		strcpy(buffer, "count");
+		break;
+	case Count_positive:
+		strcpy(buffer, "cntp");
 		break;
 	case Percentage:
 		strcpy(buffer, "pin");
@@ -169,7 +183,10 @@ void OutputAggregation::Resolve(void)
 				case Max:
 				case Count:
 					break;
+				case Count_positive:
+                    break;
 				case Average:
+				case Average_positive:
 				case Percentage:
 					_results[n] /= _count[n];
 					break;
@@ -194,18 +211,18 @@ void OutputAggregation::startResults()
 	_results.clear();
 	for(vector <double>::size_type n = 0; n < _fieldNames->size(); n++)
 	{
-		_results.push_back(varValue(0.0));	
-		_count[n]=0;	
+		_results.push_back(varValue(0.0));
+		_count[n]=0;
 	}
 }
 
-void OutputAggregation::BeginLine(FILE *file, int loop)
+void OutputAggregation::BeginLine(FILE *file, float loop)
 {
 	BeginLine(file, loop, 0);
 }
-void OutputAggregation::BeginLine(FILE *file, int loop, unsigned int agentId)
+void OutputAggregation::BeginLine(FILE *file, float loop, unsigned int agentId)
 {
-	fprintf(file,"%ld\t", loop);
+	fprintf(file,"%f\t", loop);
 	if (agentId != 0)
 		fprintf(file,"%#.8X\t", agentId);
 }
@@ -218,7 +235,7 @@ void OutputAggregation::EndLine(FILE *file)
 void OutputAggregation::ShowValues(FILE *file)
 {
 	if (_resolved == false)
-		Resolve();	
+		Resolve();
 	for(vector <char *>::size_type n = 0; n < _fieldNames->size(); n++)
 	{
 		variantToStringFile(file, _results[n]);
@@ -245,7 +262,7 @@ void OutputAggregation::variantToStringFile(FILE *file, varValue &value)
 		{
 		// tiene que haber una forma mejor!!
 		string s = value.GetStringValue();
-		for(std::basic_string<char>::iterator it = s.begin(); it != s.end();++it) 
+		for(std::basic_string<char>::iterator it = s.begin(); it != s.end();++it)
 			putc(*it, file);
 		putc('\t', file);
 		break;
