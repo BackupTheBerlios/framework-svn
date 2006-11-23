@@ -22,9 +22,9 @@
 	<Aspects>
 		<Links>
 			<Seed>-11</Seed>
-			<Friend_Probability>0.9</Friend_Probability>
+			<Friend_Probability>0.5</Friend_Probability>
 			<Random_Probability>0.1</Random_Probability>
-			<Delete_Probability>0.1</Delete_Probability>
+			<Delete_Probability>0.2</Delete_Probability>
 			<Startup_Links>0.5</Startup_Links> <!-- Number of links, express in population size levels (0.5 = 1 degree network) -->
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
@@ -127,8 +127,6 @@
 								Percentaje (usage: Percentage value="value")
 						 Default operation is Average. -->
 					<Field Operation="Average">Degree</Field>
-					<Field Operation="Sum">Degree</Field>
-					<!--Field Operation="Average">Clustering</Field-->
 					<Field Operation="Average_positive">Clustering</Field>
 					<Field Operation="Count_positive">Clustering</Field>
 					<!--Field Operation="Max">MaxDiameter</Field-->

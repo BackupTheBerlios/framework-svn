@@ -222,7 +222,7 @@ void OutputAggregation::BeginLine(FILE *file, float loop)
 }
 void OutputAggregation::BeginLine(FILE *file, float loop, unsigned int agentId)
 {
-	fprintf(file,"%f\t", loop);
+	fprintf(file,"%.2f\t", loop);
 	if (agentId != 0)
 		fprintf(file,"%#.8X\t", agentId);
 }
