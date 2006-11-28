@@ -57,6 +57,9 @@ private:
 	/*float Heterophilia;*/
 	float Delete_Probability;
 
+	float _totalByFriends;
+	float _totalByRandom;
+
 	long *Seed;
 	long _seed;
 	/*** Network evaluation ***/

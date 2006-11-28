@@ -33,9 +33,11 @@ public:
 	void *	SubPopulation;
 	int		SubPopulationId;
 	bool	IsAggregate;
+	bool	IsTotal;
 	vector <FieldGroup *> FieldGroups;
 	float	Loops;
 	int		StartLoop;
+	bool	Append;
 	double	Timespan;
 	double	lastTime;
 	bool	restarteverycycle;

@@ -333,7 +333,7 @@ void OutputAggregation::variantToStringFile(FILE *file, varValue &value)
 		{
 		double d = value.GetNumericValue();
 		if (d != (long) d)
-            fprintf(file,"%f\t", d);
+            fprintf(file,"%.4f\t", d);
 		else
 			fprintf(file,"%ld\t", (long) d);
 		break;

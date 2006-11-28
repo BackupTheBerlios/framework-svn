@@ -104,7 +104,10 @@ void LinksAspect::Evolve()
 		   There would be no problem with this, since insert biedge can deal with this*/
 		   int tertiusId = friendOfFriendId;
 		   if (must_create_new_link(agentId, tertiusId)){
+		       {
 		   		insert_biedge(agentId, tertiusId, agentLinkInfo, friendOfFriendLinkInfo);
+		   		_totalByFriends++;
+		       }
 
 		  }
 		}
@@ -124,7 +127,7 @@ void LinksAspect::Evolve()
 	  randomLinkInfo = (*this)[randomId];
 	  if (must_create_new_link(agentId, randomId)) {
 		insert_biedge(agentId, randomId, agentLinkInfo, randomLinkInfo);
-
+        _totalByRandom++;
 	  }
 	}
     /**********************************************************************************/
@@ -161,6 +164,9 @@ void LinksAspect::Evolve()
 void LinksAspect::Start()
 {
   int nLinks = (int) (Startup_Links * this->begin->GetSize());
+
+  _totalByFriends = 0;
+  _totalByRandom = 0;
 
   LinksInfo *agentLinkInfo;
   LinksInfo *randomLinkInfo;
@@ -303,7 +309,8 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 	p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
 	/* Warning: we assume that total probability is the normalized sum of all probabilities,
 	but this can be modified as a generalized sum (e. g. Minkowsi metrics)*/
-    proba = (float) ((p1+p2) / (2.0));
+    //proba = (float) ((p1 + p2) / (2.0));
+    proba = p2;
 	/*Second Normalization*/
 	if(ran1(Seed) < proba)
 		return true;
@@ -343,7 +350,25 @@ void LinksAspect::ShowValues(int agentId, std::vector <char *> & fields,
 	LinksInfo *agentInfo = (*this)[agentId];
 	for (std::vector <char *>::size_type n = 0; n < fields.size();n++)
 	{
-		if (strcmp(fields[n], "Links")		 ==0 ||
+		if (strcmp(fields[n], "LinksDistance") ==0)
+		{
+			if (agentInfo->Degree == 0)
+			{
+				values[n] = varValue(0);
+			}
+			else
+			{
+				float totalDistance = 0;
+				for (ListElmt *element = agentInfo->Table.head; element != NULL; element = element->next)
+				{
+				    //GeographyInfo *geoMyAgent_Info = (*_geographyAspect)[agentId1];
+				    //GeographyInfo *geoTargetAgent_Info = (*_geographyAspect)[element->data->v2];
+				    totalDistance += _distanceAspect->GeographicDistance(agentId, element->data->v2);
+				}
+				values[n] = varValue(totalDistance / agentInfo->Degree);
+			}
+		}
+		else if (strcmp(fields[n], "Links")		 ==0 ||
 		    strcmp(fields[n], "LinksUnique") ==0)
 		{
 			if (agentInfo->Degree == 0)
@@ -402,6 +427,10 @@ void LinksAspect::ShowValues(int agentId, std::vector <char *> & fields,
 			{
 				checkTimeStepChange();
 				retval = agentInfo->max_diameter;
+			}
+			else if (strcmp(fields[n], "FriendsRate")==0)
+			{
+				retval = (float) (_totalByFriends / (_totalByFriends + _totalByRandom));
 			}
 			else
 				retval = 0;

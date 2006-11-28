@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ModelConfiguration>
 	<Run>
-		<Loops>100</Loops> <!-- default: 1-->
+		<Loops>1000</Loops> <!-- default: 1-->
 		<StatusUpdateStep>10</StatusUpdateStep><!-- Seconds between updates of status in the console (default: 1, 0=No update) -->
 	</Run>
 	<Globals>
@@ -9,7 +9,7 @@
 	</Globals>
 	<Populations>
   	<Personas>
-			<Size>1000</Size>
+			<Size>500</Size>
 			<Aspects>
 				<EducationLevel/>
 				<Distance/>
@@ -128,11 +128,39 @@
 								Percentaje (usage: Percentage value="value")
 						 Default operation is Average. -->
 					<Field Operation="Average">Degree</Field>
+					<!--Field Operation="Average" Filter="Degree>1">Clustering</Field-->
+					<Field Operation="Average" Filter="Degree=2">Clustering</Field>
+					<Field Operation="Average" Filter="Degree>2">Clustering</Field>
+					<Field Operation="Count" Filter="Degree=2">Degree</Field>
+					<Field Operation="Count" Filter="Degree>2">Degree</Field>
+					<Field Operation="Average">LinksDistance</Field>
+					<Field Operation="Average">FriendsRate</Field>
+				</Links>
+			</Fields>
+		</Output>
+        <Output>
+			<Headers>Yes</Headers>
+			<Population>Personas</Population>
+			<Type>Total</Type>
+			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+            <Append>Yes</Append> <!-- Values: yes / no (default) -->
+            <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
+            <Loops>10</Loops>
+			<Fields>
+				<Links>
+					<!-- [Operation] = optional
+								Valid operations are:
+								Average, Sum, Min, Max, Median, Count,
+								Percentaje (usage: Percentage value="value")
+						 Default operation is Average. -->
 					<Field Operation="Average">Degree</Field>
-					<Field Operation="Average_positive">Clustering</Field>
-					<Field Operation="Count_positive">Clustering</Field>
-					<!--Field Operation="Max">MaxDiameter</Field-->
-					<!--Field Operation="Average">Betweenness</Field-->
+					<!--Field Operation="Average" Filter="Degree>1">Clustering</Field-->
+					<Field Operation="Average" Filter="Degree=2">Clustering</Field>
+					<Field Operation="Average" Filter="Degree>2">Clustering</Field>
+					<Field Operation="Count" Filter="Degree=2">Degree</Field>
+					<Field Operation="Count" Filter="Degree>2">Degree</Field>
+					<Field Operation="Average">LinksDistance</Field>
+					<Field Operation="Average">FriendsRate</Field>
 				</Links>
 			</Fields>
 		</Output>

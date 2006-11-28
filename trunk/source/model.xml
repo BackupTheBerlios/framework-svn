@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ModelConfiguration>
 	<Run>
-		<Loops>24</Loops>
+		<Loops>100</Loops>
 	</Run>
 	<Populations>
 		<Personas>
@@ -34,9 +34,9 @@
 			<Headers>Yes</Headers>
 			<Population>Empresas</Population>
 			<Type>List</Type>
-			<Loops>12</Loops> 
+			<Loops>12</Loops>
 			<Fields>
-				<Employer> 
+				<Employer>
 					<Field>EmployeesCount</Field>
 				</Employer>
 				<Color>
@@ -49,13 +49,13 @@
 			<Headers>Yes</Headers>
 			<Population>Empresas</Population>
 			<Type>Aggregate</Type>
-			<Loops>12</Loops> 
+			<Loops>12</Loops>
 			<Fields>
-				<Employer> 
+				<Employer>
 					<!-- [Operation] = optional
 								Valid operations are:
 								Average, Sum, Min, Max, Median, Count,
-								Percentaje (usage: Percentage value="value") 
+								Percentaje (usage: Percentage value="value")
 						 Default operation is Average. -->
 					<Field Operation="Average">EmployeesCount</Field>
 				</Employer>

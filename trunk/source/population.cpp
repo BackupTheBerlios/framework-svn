@@ -121,6 +121,7 @@ void Population::CreateOutputs()
 		int startloop = getchildxmlnodeintvalue(outputinfo, "StartLoop", 1);
 		int timespan = getchildxmlnodeintvalue(outputinfo, "Timespan", 0xFFFFFF);
 		bool restarteverycycle = getchildxmlnodeboolvalue(outputinfo, "RestartEveryCycle", false);
+		bool append = getchildxmlnodeboolvalue(outputinfo, "Append", false);
 		bool enabled = getchildxmlnodeboolvalue(outputinfo, "Enabled", true);
 		// Checks pointers and names
 		//if (filename == NULL)
@@ -130,13 +131,23 @@ void Population::CreateOutputs()
 		if (typeName == NULL)
 			throw ("Output config error: type for output block was not found.");
 		if (strcmp(typeName,"Aggregate") != 0 &&
+		    strcmp(typeName,"Total") != 0 &&
 			strcmp(typeName,"List") != 0)
-			throw ("Output config error: type value is invalid. Only Aggregate and List are valid values.");
-		bool typeIsAggregate = (strcmp(typeName,"Aggregate") == 0);
+			throw ("Output config error: type value is invalid. Only Aggregate, Total and List are valid values.");
+		bool typeIsAggregate = (strcmp(typeName,"Aggregate") == 0 || strcmp(typeName,"Total") == 0);
+		bool typeIsTotal = (strcmp(typeName,"Total") == 0);
 		int id;
 		Population::SubPopulation *subp = this->getSubPopulationByName(populationName, id);
 		if (subp == NULL)
 			throw ("Output config error: the population " + string(populationName) + " count not be found.");
+        // Check refres rate
+        int LoopsByDelta = (int) round(loops / this->_deltaT);
+        if (LoopsByDelta < 1)
+        {
+            loops = 1 * this->_deltaT;
+            printf("\nWarning: At least one Loops parameter for an Output does not \n         satisfy Loops / DT >= 1 ... overriding to %.2f...\n\n", loops);
+        }
+
 		output->SubPopulation = (void *) subp;
 		output->SubPopulationId = id;
 		output->File = NULL;
@@ -146,6 +157,8 @@ void Population::CreateOutputs()
 		output->Filename = filename;
 		output->Headers = headers;
 		output->IsAggregate = typeIsAggregate;
+		output->IsTotal = typeIsTotal;
+		output->Append = append;
 		output->Loops = loops;
 		output->StartLoop = startloop-1;
 		output->Timespan= timespan;
@@ -567,6 +580,7 @@ void Population::_iterate()
 }
 void Population::doOutput()
 {
+    bool outputTotals = false;
 	// Llama a cada output interno
 	for (vector<Output *>::size_type n = 0;
 				n < _outputs.size(); n++)
@@ -585,7 +599,8 @@ void Population::doOutput()
 		    int LoopsByDelta = (int) round(out->Loops / this->_deltaT);
             int StartLoopByDelta = (int) round(out->StartLoop / this->_deltaT);
             bool bShow = ((_history - StartLoopByDelta) % LoopsByDelta  == 0 && _history >= StartLoopByDelta);
-            if ((bShow ||  (t - out->lastTime) > out->Timespan))
+            bool bShowTotals = (outputTotals && out->IsTotal);
+            if (bShowTotals || bShow ||  (t - out->lastTime) > out->Timespan)
             {
                 // Le toca...
                 out->lastTime = t;
