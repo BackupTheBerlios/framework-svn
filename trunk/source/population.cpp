@@ -2,9 +2,12 @@
 #include <string>
 #include <iostream>
 #include <typeinfo>
+//#include <cmath>
 #include "timep.h"
 
 #include "framework.h"
+
+#define round(value) ((int) (value + 0.5))
 
 #define size_pops vector<Population::SubPopulation>::size_type
 

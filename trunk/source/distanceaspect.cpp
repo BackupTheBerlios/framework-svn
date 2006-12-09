@@ -13,17 +13,28 @@ float DistanceAspect::GeographicDistance(key agentId1, key agentId2)
    /*Generic Minkowski metric delta=1 Manhattan delta=2 Euclid*/
    GeographyInfo *agentId1_Info = (*_geographyAspect)[agentId1];
    GeographyInfo *agentId2_Info = (*_geographyAspect)[agentId2];
-
-   if (agentId1_Info->X != agentId2_Info->X)
-	   dist += exp(_delta * log(IABS(agentId1_Info->X, agentId2_Info->X)));
-   if (agentId1_Info->Y != agentId2_Info->Y)
-	   dist += exp(_delta * log(IABS(agentId1_Info->Y, agentId2_Info->Y)));
-
+   dist = _geographyAspect->GeographicDistance(agentId1_Info->X, agentId1_Info->Y, agentId2_Info->X, agentId2_Info->Y);
+   
    if (dist)
 		return exp(log(dist) / _delta);
    else
 		return 0.0;
 }
+/*
+float DistanceAspect::GeographicDistance(float x1, float y1, float x2, float y2)
+{
+   float dist=0.0;
+   // Generic Minkowski metric delta=1 Manhattan delta=2 Euclid
+   if (x1 != x2)
+	   dist += exp(_delta * log(IABS(x1, x2)));
+   if (y1 != y2)
+	   dist += exp(_delta * log(IABS(y1, y2)));
+
+   if (dist)
+		return exp(log(dist) / _delta);
+   else
+		return 0.0;
+}*/
 /*symmetric distance*/
 int DistanceAspect::EducationDistance(key agentId1, key agentId2)
 {

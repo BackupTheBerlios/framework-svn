@@ -45,8 +45,9 @@
 			<Delta>1</Delta>
 		</Distance>
 		<Geography>
-			<Width>1</Width> <!-- dim[xc]-->
-			<Height>1</Height> <!-- dim[yc]-->
+      <Delta>1</Delta>
+			<Width>10</Width> <!-- dim[xc]-->
+			<Height>10</Height> <!-- dim[yc]-->
 			<Alfa>0</Alfa>
 			<Seed>-11</Seed>
 		</Geography>
@@ -57,7 +58,7 @@
 			<Headers>Yes</Headers> <!-- Values: yes (default) / no  -->
 			<Population>Personas</Population>
       <RestartEveryCycle>No</RestartEveryCycle> <!-- Values: yes / no (default) -->
-      <Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+      <Enabled>No</Enabled> <!-- Values: yes (default) / no  -->
 			<Type>List</Type>
       <StartLoop>1</StartLoop>  <!-- Values: 1 (default) to loops  -->
       <Loops>1</Loops>		<!-- Max. # of loops in seconds (default infinite)-->
