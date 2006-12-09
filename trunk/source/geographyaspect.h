@@ -19,6 +19,10 @@ public:
 	void ReleaseAspect();
 	float pdistrGeographic(float gdist);
 	float GeographicDistance(float x1, float y1, float x2, float y2);
+	bool hasInCache(int cellsX, int cellsY, int size, float _alfa, float _delta);
+	float getFromCache(int cellsX, int cellsY, int size, float _alfa, float _delta, float *norm_of_sum);
+	float GetProbaNormalization(float *norm_of_sum);
+
 private:
 	long *Seed;
 	long _seed;

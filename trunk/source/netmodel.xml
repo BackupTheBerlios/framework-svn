@@ -22,14 +22,14 @@
 	<Aspects>
 		<Links>
 			<Seed>-11</Seed>
-			<Friend_Probability>0.5</Friend_Probability>
-			<Random_Probability>0.1</Random_Probability>
-			<Delete_Probability>0.2</Delete_Probability>
+			<Friend_Probability>0.0</Friend_Probability>
+			<Random_Probability>5.0</Random_Probability>
+			<Delete_Probability>0.0001</Delete_Probability>
 			<Startup_Links>0.5</Startup_Links> <!-- Number of links, express in population size levels (0.5 = 1 degree network) -->
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
 			<Levels>1</Levels>
-			<Beta> 0 </Beta>
+			<Beta>0</Beta>
 			<Seed>25</Seed>
 		</EducationLevel>
 		<SocialCircle><!-- dim[circ]-->
@@ -46,9 +46,9 @@
 		</Distance>
 		<Geography>
       <Delta>1</Delta>
-			<Width>10</Width> <!-- dim[xc]-->
-			<Height>10</Height> <!-- dim[yc]-->
-			<Alfa>0</Alfa>
+			<Width>100</Width> <!-- dim[xc]-->
+			<Height>100</Height> <!-- dim[yc]-->
+			<Alfa>2</Alfa>
 			<Seed>-11</Seed>
 		</Geography>
 	</Aspects>
@@ -89,9 +89,9 @@
 			<Headers>No</Headers>
 			<Population>Personas</Population>
 			<Type>Aggregate</Type>
-			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+			<Enabled>No</Enabled> <!-- Values: yes (default) / no  -->
       <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
-      <Loops>0.1</Loops>
+      <Loops>100</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional
@@ -109,8 +109,8 @@
 					<Field Operation="Count" Value="0">Degree</Field>
 					<Field Operation="Count" Value="1">Degree</Field>
 					<Field Operation="Count" Value="2">Degree</Field>
-                    <Field Operation="Count" Value="4">Degree</Field>
-                    <Field Operation="Count" Value="5">Degree</Field>
+          <Field Operation="Count" Value="4">Degree</Field>
+          <Field Operation="Count" Value="5">Degree</Field>
 				</Links>
 			</Fields>
 		</Output>
@@ -119,8 +119,8 @@
 			<Population>Personas</Population>
 			<Type>Aggregate</Type>
 			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
-            <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
-            <Loops>10</Loops>
+      <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
+      <Loops>10</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional
@@ -139,11 +139,11 @@
 				</Links>
 			</Fields>
 		</Output>
-        <Output>
+    <Output>
 			<Headers>Yes</Headers>
 			<Population>Personas</Population>
 			<Type>Total</Type>
-			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+			<Enabled>No</Enabled> <!-- Values: yes (default) / no  -->
             <Append>Yes</Append> <!-- Values: yes / no (default) -->
             <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
             <Loops>10</Loops>

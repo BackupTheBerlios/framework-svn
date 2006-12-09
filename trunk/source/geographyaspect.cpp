@@ -42,10 +42,57 @@ void GeographyAspect::Start()
 			element->Y = yHeight / 2 + gasdev(Seed) * yHeight / 3;
 		while (element->Y < 0 || element->Y > yHeight);
 	}
-	// Calculate n for the grid 
+	// Gets the sum of all probas
+	_sum_of_all_probas_norm = GetProbaNormalization(&_norm_of_sum);	
+}
+bool GeographyAspect::hasInCache(int cellsX, int cellsY, int size, float _alfa, float _delta)
+{
+	float ret;
+	return getFromCache(cellsX, cellsY, size, _alfa, _delta, &ret) > -1;
+}
+float GeographyAspect::getFromCache(int cellsX, int cellsY, int size, float _alfa, float _delta, float *norm_of_sum)
+{
+	if (cellsX == 10 && cellsY == 10 && size == 500 && Alfa == 2.000000 && _delta == 1.000000)
+	{
+		*norm_of_sum = 0.010000;  
+		return 0.054910;
+	}
+	if (cellsX == 100 && cellsY == 100 && size == 500 && Alfa == 4.000000 && _delta == 1.000000)
+	{
+		*norm_of_sum = 0.000100;  
+		return 0.002132;
+	}
+	if (cellsX == 100 && cellsY == 100 && size == 500 && Alfa == 2.000000 && _delta == 1.000000)
+	{
+		*norm_of_sum = 0.000100;  
+		return 0.003386;
+	}
+	if (cellsX == 100 && cellsY == 100 && size == 500 && Alfa == 0.000000 && _delta == 1.000000)
+	{
+		*norm_of_sum = 0.000100;  
+		return 1.000000;
+	}
+	else
+		return -1;
+}
+
+float GeographyAspect::GetProbaNormalization(float *norm_of_sum)
+{
+	float xWidth = GetConfigFloat("Width");
+	float yHeight = GetConfigFloat("Height");
+	
 	int cellsX = (int) xWidth; int cellsY = (int) yHeight;
+	int size = this->begin->GetSize();
+	
+	if (hasInCache(cellsX, cellsY, size, Alfa, _delta))
+	{
+		return getFromCache(cellsX, cellsY, size, Alfa, _delta, norm_of_sum);
+	}
+
+	// Calculate n for the grid 
 	int *count = new int[cellsX * cellsY];
 	memset(count, 0, sizeof(int) * (cellsX * cellsY));
+	GeographyInfo *element;
 	for (Population::Iterator agentId = this->begin;
 		agentId != this->end; ++agentId)
 	{
@@ -53,7 +100,6 @@ void GeographyAspect::Start()
 		count[(int) (element->X) * cellsX + 
 			(int) (element->Y)]++;
 	}
-	// Gets the sum of all probas
 	int x1, x2; int y1, y2;
 	float dist;
 	float proba;
@@ -74,11 +120,15 @@ void GeographyAspect::Start()
 						sum_of_all_probas += add;
 				}
 		}
-	int size = this->begin->GetSize();
-	_sum_of_all_probas_norm = sum_of_all_probas / (size * size);
-	_norm_of_sum = 1 / (cellsX * cellsY);
+	float sum_of_all_probas_norm;
+	sum_of_all_probas_norm = sum_of_all_probas / (size * size);
+	*norm_of_sum = 1.0F / (cellsX * cellsY);
 	// done
 	free(count);
+	//
+	printf("\nNoncached value for: cellsX == %i && cellsY == %i && size == %i && Alfa == %f && _delta == %f\n", cellsX, cellsY, size, Alfa, _delta);
+	printf("*norm_of_sum = %f;  sum_of_all_probas_norm = %f;\n\n", *norm_of_sum, sum_of_all_probas_norm);
+	return sum_of_all_probas_norm;
 }
 
 float GeographyAspect::GeographicDistance(float x1, float y1, float x2, float y2)
@@ -98,7 +148,7 @@ float GeographyAspect::GeographicDistance(float x1, float y1, float x2, float y2
 
 float GeographyAspect::pdistrGeographic(float gdist)
 {
-    return pdistrGeographicRaw(gdist) / _norm_of_sum * _sum_of_all_probas_norm;
+    return pdistrGeographicRaw(gdist) / _sum_of_all_probas_norm * _norm_of_sum;
 }
 float GeographyAspect::pdistrGeographicRaw(float gdist)
 {

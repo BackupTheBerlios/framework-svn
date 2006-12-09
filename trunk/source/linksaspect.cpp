@@ -66,9 +66,6 @@ void LinksAspect::Evolve()
   int deleteId;
   int agentId;
 
-
-  int q = 0;
-
   for (Population::Iterator agentIditer = this->begin;
 						agentIditer != this->end; ++agentIditer)
   {
@@ -157,7 +154,6 @@ void LinksAspect::Evolve()
 	  }
 	  r++;
 	} // end of the while
-	q++;
   } // end of the for... agents
 }
 
