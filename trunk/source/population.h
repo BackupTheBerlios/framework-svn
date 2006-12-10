@@ -197,7 +197,7 @@ class Population
 		// Private methods
 		const char *fileOnly(const char *file);
 		void _iterate();
-		void doOutput();
+		void doOutput(bool onlyShowOutputTotals);
 		void Initialize();
 		void ParseFilterString(char *filterString, FilterOperation *op, char **posStart, char **posEnd);
 		void CreateOutputs(void);

@@ -46,7 +46,7 @@ void Output::CheckFileOpen()
 	if (this->Append == false)
         this->File = fopen(this->Filename, "w");
     else
-        this->File = fopen(this->Filename, "w+");
+        this->File = fopen(this->Filename, "a+");
 
 	if (this->File == NULL)
 		throw "Could not open file: " + string(this->Filename);

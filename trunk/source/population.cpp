@@ -578,13 +578,12 @@ void Population::_iterate()
 {
     for (vector<AspectBase *>::size_type a = 0; a < _runAspects.size(); a++)
 		_runAspects[a]->Evolve();
-	doOutput();
+	doOutput(false);
 	_history++;
 }
-void Population::doOutput()
+void Population::doOutput(bool onlyShowOutputTotals)
 {
-    bool outputTotals = false;
-	// Llama a cada output interno
+    // Llama a cada output interno
 	for (vector<Output *>::size_type n = 0;
 				n < _outputs.size(); n++)
 	{
@@ -601,9 +600,9 @@ void Population::doOutput()
 		    float b = this->_deltaT;
 		    int LoopsByDelta = (int) round(out->Loops / this->_deltaT);
             int StartLoopByDelta = (int) round(out->StartLoop / this->_deltaT);
-            bool bShow = ((_history - StartLoopByDelta) % LoopsByDelta  == 0 && _history >= StartLoopByDelta);
-            bool bShowTotals = (outputTotals && out->IsTotal);
-            if (bShowTotals || bShow ||  (t - out->lastTime) > out->Timespan)
+            bool IsLoopForAggregate = ((_history - StartLoopByDelta) % LoopsByDelta  == 0 && _history >= StartLoopByDelta)
+										|| ((t - out->lastTime) > out->Timespan);
+            if (onlyShowOutputTotals == false && IsLoopForAggregate)
             {
                 // Le toca...
                 out->lastTime = t;
@@ -638,8 +637,20 @@ void Population::doOutput()
                         OutputAggregation::EndLine(out->File);
 
                 }
+			}
+			// Hace el output al archivo en tres casos:
+			// - es un aggregate (no un total)
+			// - está en el print final
+			if (onlyShowOutputTotals == true || 
+				(out->IsTotal == false && IsLoopForAggregate))
+            {
                 if (out->IsAggregate == true)
                 {
+				    // Se fija si tiene que abrir el archivo
+				    out->CheckFileOpen();
+	                // Write headers if it overwrites everytime
+					out->CheckFileHeaders();
+            
                     OutputAggregation::BeginLine(out->File, this->_history * this->_deltaT);
                     for (vector <FieldGroup *>::size_type g = 0;
                                     g < out->FieldGroups.size(); g++)
@@ -665,7 +676,7 @@ void Population::Run()
     Iterate(times);
 	std::cout << LINE;
 	std::cout << "Finished.\n";
-
+	doOutput(true);
 }
 
 

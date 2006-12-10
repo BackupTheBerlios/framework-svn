@@ -61,6 +61,8 @@ void EducationLevelAspect::ShowValues(int agentId, std::vector <char *> & fields
 	{
 		if (strcmp(fields[n], "EducationLevel")==0)
 			values[n] = varValue((*this)[agentId]->EducationLevel);
+		else if (strcmp(fields[n], "Beta")==0)
+			values[n] = varValue(Beta);
 		else
 			values[n] = varValue(0);
 	}

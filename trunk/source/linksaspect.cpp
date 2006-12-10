@@ -397,6 +397,12 @@ void LinksAspect::ShowValues(int agentId, std::vector <char *> & fields,
 			double retval;
 			if (strcmp(fields[n], "Degree")==0)
 				retval = agentInfo->Degree;
+			else if (strcmp(fields[n], "Friend_Probability")==0)
+				retval = Friend_Probability;
+			else if (strcmp(fields[n], "Random_Probability")==0)
+				retval = Random_Probability;
+			else if (strcmp(fields[n], "Delete_Probability")==0)
+				retval = Delete_Probability;
 			else if (strcmp(fields[n], "Clustering")==0)
 				retval = clustering(agentInfo);
 			else if (strcmp(fields[n], "MeanShortest")==0)

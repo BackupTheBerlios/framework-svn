@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <ModelConfiguration>
 	<Run>
-		<Loops>1000</Loops> <!-- default: 1-->
+		<Loops>5000</Loops> <!-- default: 1-->
 		<StatusUpdateStep>10</StatusUpdateStep><!-- Seconds between updates of status in the console (default: 1, 0=No update) -->
 	</Run>
 	<Globals>
-		<DeltaT>0.1</DeltaT> <!-- default: 1-->
+		<DeltaT>0.01</DeltaT> <!-- default: 1-->
 	</Globals>
 	<Populations>
   	<Personas>
-			<Size>500</Size>
+			<Size>10000</Size>
 			<Aspects>
 				<EducationLevel/>
 				<Distance/>
@@ -24,7 +24,7 @@
 			<Seed>-11</Seed>
 			<Friend_Probability>0.0</Friend_Probability>
 			<Random_Probability>5.0</Random_Probability>
-			<Delete_Probability>0.0001</Delete_Probability>
+			<Delete_Probability>0.0005</Delete_Probability>
 			<Startup_Links>0.5</Startup_Links> <!-- Number of links, express in population size levels (0.5 = 1 degree network) -->
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
@@ -48,7 +48,7 @@
       <Delta>1</Delta>
 			<Width>100</Width> <!-- dim[xc]-->
 			<Height>100</Height> <!-- dim[yc]-->
-			<Alfa>2</Alfa>
+			<Alfa>0</Alfa>
 			<Seed>-11</Seed>
 		</Geography>
 	</Aspects>
@@ -86,10 +86,10 @@
 		</Output>
 		<Output>
 			<Filename>nodos_summary.txt</Filename>
-			<Headers>No</Headers>
+			<Headers>Yes</Headers>
 			<Population>Personas</Population>
 			<Type>Aggregate</Type>
-			<Enabled>No</Enabled> <!-- Values: yes (default) / no  -->
+			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
       <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
       <Loops>100</Loops>
 			<Fields>
@@ -141,12 +141,13 @@
 		</Output>
     <Output>
 			<Headers>Yes</Headers>
-			<Population>Personas</Population>
+      <Filename>totales_summary.txt</Filename>
+      <Population>Personas</Population>
 			<Type>Total</Type>
-			<Enabled>No</Enabled> <!-- Values: yes (default) / no  -->
-            <Append>Yes</Append> <!-- Values: yes / no (default) -->
-            <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
-            <Loops>10</Loops>
+			<Enabled>Yes</Enabled> <!-- Values: yes (default) / no  -->
+      <Append>Yes</Append> <!-- Values: yes / no (default) -->
+      <StartLoop>1</StartLoop> <!-- Values: 1 (default) to loops  -->
+      <Loops>100</Loops>
 			<Fields>
 				<Links>
 					<!-- [Operation] = optional
@@ -155,14 +156,20 @@
 								Percentaje (usage: Percentage value="value")
 						 Default operation is Average. -->
 					<Field Operation="Average">Degree</Field>
-					<!--Field Operation="Average" Filter="Degree>1">Clustering</Field-->
 					<Field Operation="Average" Filter="Degree=2">Clustering</Field>
 					<Field Operation="Average" Filter="Degree>2">Clustering</Field>
-					<Field Operation="Count" Filter="Degree=2">Degree</Field>
-					<Field Operation="Count" Filter="Degree>2">Degree</Field>
 					<Field Operation="Average">LinksDistance</Field>
 					<Field Operation="Average">FriendsRate</Field>
+          <Field Operation="Max">Friend_Probability</Field>
+          <Field Operation="Max">Random_Probability</Field>
+          <Field Operation="Max">Delete_Probability</Field>
 				</Links>
+        <Geography>
+          <Field Operation="Max">Alfa</Field>
+        </Geography>
+        <EducationLevel>
+          <Field Operation="Max">Beta</Field>
+        </EducationLevel>
 			</Fields>
 		</Output>
 	</Outputs>

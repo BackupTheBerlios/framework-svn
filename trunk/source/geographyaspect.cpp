@@ -72,6 +72,21 @@ float GeographyAspect::getFromCache(int cellsX, int cellsY, int size, float _alf
 		*norm_of_sum = 0.000100;  
 		return 1.000000;
 	}
+	if (cellsX == 100 && cellsY == 100 && size == 100000 && Alfa == 2.000000 && _delta == 1.000000)
+	{
+		*norm_of_sum = 0.000100;  
+		return 0.008573;
+	}
+	if (cellsX == 100 && cellsY == 100 && size == 10000 && Alfa == 0.000000 && _delta == 1.000000)
+	{
+		*norm_of_sum = 0.000100;
+		return 0.786092;
+	}
+	if (cellsX == 100 && cellsY == 100 && size == 100000 && Alfa == 0.000000 && _delta == 1.000000)
+	{	
+		*norm_of_sum = 0.000100;  
+		return 4.081978;
+	}
 	else
 		return -1;
 }
@@ -176,6 +191,8 @@ void GeographyAspect::ShowValues(int agentId, std::vector <char *> & fields,
 			values[n] = varValue((*this)[agentId]->X);
 		else if (strcmp(fields[n], "Y")==0)
 			values[n] = varValue((*this)[agentId]->Y);
+		else if (strcmp(fields[n], "Alfa")==0)
+			values[n] = varValue(Alfa);
 		else
 			values[n] = varValue(0);
 	}
