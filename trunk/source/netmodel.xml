@@ -111,7 +111,11 @@
 					<Field Operation="Count" Value="2">Degree</Field>
           <Field Operation="Count" Value="4">Degree</Field>
           <Field Operation="Count" Value="5">Degree</Field>
-				</Links>
+          <Field Operation="Average" Filter="Degree=2">Clustering</Field>
+          <Field Operation="Average" Filter="Degree>2">Clustering</Field>
+          <Field Operation="Average">LinksDistance</Field>
+          <Field Operation="Average">FriendsRate</Field>
+        </Links>
 			</Fields>
 		</Output>
 		<Output>

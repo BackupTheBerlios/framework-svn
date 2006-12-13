@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     {
         printf("\n** Error occured: %s **\n", str);
     }
-	getc(stdin);
+	//getc(stdin);
 	return 0;
 }
 
