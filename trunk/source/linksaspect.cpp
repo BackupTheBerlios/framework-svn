@@ -365,6 +365,24 @@ void LinksAspect::ShowValues(int agentId, std::vector <char *> & fields,
 				values[n] = varValue(totalDistance / agentInfo->Degree);
 			}
 		}
+		else if (strcmp(fields[n], "LinksDistanceEducation") ==0)
+		{
+			if (agentInfo->Degree == 0)
+			{
+				values[n] = varValue(0);
+			}
+			else
+			{
+				float totalDistance = 0;
+				for (ListElmt *element = agentInfo->Table.head; element != NULL; element = element->next)
+				{
+				    //GeographyInfo *geoMyAgent_Info = (*_geographyAspect)[agentId1];
+				    //GeographyInfo *geoTargetAgent_Info = (*_geographyAspect)[element->data->v2];
+				    totalDistance += _distanceAspect->EducationDistance(agentId, element->data->v2);
+				}
+				values[n] = varValue(totalDistance / agentInfo->Degree);
+			}
+		}
 		else if (strcmp(fields[n], "Links")		 ==0 ||
 		    strcmp(fields[n], "LinksUnique") ==0)
 		{
