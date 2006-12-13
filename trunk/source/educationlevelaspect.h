@@ -16,6 +16,8 @@ public:
 								 varValue *values);
 	~EducationLevelAspect();
 	float pdistrEducational(int gap);
+	float pdistrEducationalRaw(int gap);
+	void Start();
 	/*float pdistrHomophilia(int gap);*/
 	/*float pdistrHeterophilia(int gap);*/
 
@@ -23,8 +25,11 @@ private:
 	long *Seed;
 	long _seed;
 	int _levels;
+	float _sum_of_all_probas_norm;
+	float _norm_of_sum;
 	/*float _toleranceHeterophilia;*/
 	/*float _toleranceHomophilia;*/
+	float GetProbaNormalization(float *norm_of_sum);
 	float Beta;
 };
 

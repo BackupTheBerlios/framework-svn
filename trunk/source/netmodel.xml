@@ -9,7 +9,7 @@
 	</Globals>
 	<Populations>
   	<Personas>
-			<Size>10000</Size>
+			<Size>100</Size>
 			<Aspects>
 				<EducationLevel/>
 				<Distance/>
@@ -22,13 +22,13 @@
 	<Aspects>
 		<Links>
 			<Seed>-11</Seed>
-			<Friend_Probability>0.0</Friend_Probability>
+			<Friend_Probability>5.0</Friend_Probability>
 			<Random_Probability>5.0</Random_Probability>
 			<Delete_Probability>0.0005</Delete_Probability>
 			<Startup_Links>0.5</Startup_Links> <!-- Number of links, express in population size levels (0.5 = 1 degree network) -->
 		</Links>
 		<EducationLevel><!-- dim[levels]-->
-			<Levels>1</Levels>
+			<Levels>3</Levels>
 			<Beta>0</Beta>
 			<Seed>25</Seed>
 		</EducationLevel>

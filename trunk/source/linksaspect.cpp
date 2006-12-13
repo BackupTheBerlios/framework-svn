@@ -305,12 +305,13 @@ bool LinksAspect::must_create_new_link(int agentId1, int agentId2)
 	p2 = (float) _geographyAspect->pdistrGeographic(geographicDistance);
 	/* Warning: we assume that total probability is the normalized sum of all probabilities,
 	but this can be modified as a generalized sum (e. g. Minkowsi metrics)*/
-    //proba = (float) ((p1 + p2) / (2.0));
-    proba = p2;
+    proba = (float) ((p1 + p2) / (2.0));
+    //proba = p2;
 	/*Second Normalization*/
 	if(ran1(Seed) < proba)
 		return true;
-   return false;
+	else
+		return false;
 }
 
 void LinksAspect::ReleaseAspect()

@@ -2,6 +2,8 @@
 #include "educationlevelaspect.h"
 #include "distributions.h"
 
+#define IABS(a,b) (a>b ? a-b : b-a)
+
 void EducationLevelAspect::Evolve()
 {
 
@@ -17,23 +19,71 @@ void EducationLevelAspect::InitializeAspect()
 	Beta = GetConfigFloat("Beta");
 	_levels = GetConfigInt("Levels");
 	_seed	= GetConfigLong("Seed"); Seed = &_seed;
+}
+
+void EducationLevelAspect::Start()
+{
 	// Set random educationlevels for everybody...
 	for (Population::Iterator agentId = this->begin;
 		agentId != this->end; ++agentId)
 	{
 		(*this)[*agentId]->EducationLevel= (int)floor(_levels * ran1(Seed));
 	}
+	// Gets the sum of all probas
+	_sum_of_all_probas_norm = GetProbaNormalization(&_norm_of_sum);	
 }
 
+float EducationLevelAspect::GetProbaNormalization(float *norm_of_sum)
+{
+	int size = this->begin->GetSize();
+	// Calculate n for the grid 
+	int *count = new int[_levels];
+	memset(count, 0, sizeof(int) * (_levels));
+	EducationLevelInfo *element;
+	for (Population::Iterator agentId = this->begin;
+		agentId != this->end; ++agentId)
+	{
+		element = (*this)[*agentId];
+		count[element->EducationLevel]++;
+	}
+	int i1, i2; 
+	int dist;
+	float proba;
+	float sum_of_all_probas = 0;
+	for (i1 = 0; i1 < _levels; i1++)
+	{
+		// Goes through each cell
+		for (i2 = 0; i2 < _levels; i2++)
+		{
+			dist = IABS(i1, i2);
+			proba = this->pdistrEducationalRaw(dist);
+			int c1 = count[i1];
+			int c2 = count[i2];
+			float add = proba * c1 * c2;
+			if (add > 0)
+				sum_of_all_probas += add;
+		}
+	}
+	float sum_of_all_probas_norm;
+	sum_of_all_probas_norm = sum_of_all_probas / (size * size);
+	*norm_of_sum = 1.0F / _levels;
+	// done
+	free(count);
+	return sum_of_all_probas_norm;
+}
 EducationLevelAspect::~EducationLevelAspect()
 {
 	;
 }
 
-float EducationLevelAspect::pdistrEducational(int gap)
+float EducationLevelAspect::pdistrEducationalRaw(int gap)
 {
    float proba = exp(-gap*gap*Beta / ((_levels)*(_levels)));
    return proba;
+}
+float EducationLevelAspect::pdistrEducational(int gap)
+{
+   return(this->pdistrEducationalRaw(gap) / _sum_of_all_probas_norm * _norm_of_sum);
 }
 
 /*Simmeric distance
